@@ -1,10 +1,9 @@
-# Copyright (c) 2014-2017 Miroslav Stampar (@stamparm)
+# Copyright (c) 2014-2025 Maltrail developers (https://github.com/stamparm/maltrail/)
 # See the file 'LICENSE' for copying permission
 
 # Reference: http://blog.dynamoo.com/2015/02/some-superfish-domains-and-ip-addresse.html
 
 venn.me
-best-deals-products.com
 superfish.com
 pin2buy.net
 pintobuy.net

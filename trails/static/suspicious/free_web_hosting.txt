@@ -1,5 +1,9 @@
-# Copyright (c) 2014-2017 Miroslav Stampar (@stamparm)
+# Copyright (c) 2014-2025 Maltrail developers (https://github.com/stamparm/maltrail/)
 # See the file 'LICENSE' for copying permission
+
+# User reported
+
+profreehost.com
 
 # Reference: http://malwaredomains.lehigh.edu/files/freewebhosts.txt
 
@@ -36,7 +40,6 @@ comuv.com
 comxa.com
 comyr.com
 comze.com
-crabdance.com
 ddl2.pl
 designcarthosting.com
 digitalzones.com
@@ -155,6 +158,7 @@ zymic.com
 # Reference: http://buildfree.org/quicklinks.html
 
 000webhost.com
+000webhostapp.com
 00freehost.com
 0catch.com
 0hna.com
@@ -215,10 +219,10 @@ freewebhostingarea.com
 freewebsitehosting.com
 freewebspace.com
 freewebtools.com
+freewha.com
 friendcircles.com
 girlsense.com
 gofreeserve.com
-google.com
 graffiti.net
 greatnow.com
 homemarker.com
@@ -261,6 +265,7 @@ websitehostfree.com
 webspawner.com
 weebly.com
 wix.com
+wixsite.com
 wtcsites.com
 x10hosting.com
 xaper.com
@@ -307,7 +312,6 @@ comxa.com
 comyr.com
 comze.com
 co.nu
-crabdance.com
 ddl2.pl
 designcarthosting.com
 digitalzones.com
@@ -419,3 +423,49 @@ webege.com
 webnika.info
 website-home.ws
 website.or
+
+# Reference: https://twitter.com/ScumBots/status/1140724407687684096
+# Reference: https://www.virustotal.com/gui/domain/heliohost.org/details
+
+heliohost.org
+
+# Reference: https://github.com/stamparm/maltrail/pull/6726#issuecomment-585150689
+
+6te.net
+
+# Reference: https://tiiny.host/
+
+tiiny.host
+
+# Reference: https://www.virustotal.com/gui/domain/ftp.totallyanonymous.com/relations
+
+ftp.totallyanonymous.com
+
+# Reference: https://www.scumware.org/report/drivehq.com
+
+drivehq.com
+
+# Reference: https://www.virustotal.com/gui/domain/great-site.net/relations
+# Reference: https://github.com/stamparm/maltrail/pull/11408#issuecomment-705399951
+
+great-site.net
+
+# Reference: https://www.virustotal.com/gui/domain/22web.org/relations
+
+22web.org
+
+# Reference: https://www.virustotal.com/gui/domain/onlinewebshop.net/relations
+
+onlinewebshop.net
+
+# Reference: https://www.virustotal.com/gui/domain/medianewsonline.com/detection
+
+medianewsonline.com
+
+# Reference: https://community.emergingthreats.net/t/ruleset-update-summary-2022-11-17-v10175/164
+
+mypressonline.com
+
+# Reference: https://community.emergingthreats.net/t/ruleset-update-summary-2023-11-16-v10467/1126
+
+infinityfreeapp.com

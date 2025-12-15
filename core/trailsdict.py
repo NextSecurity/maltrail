@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2014-2017 Miroslav Stampar (@stamparm)
+Copyright (c) 2014-2025 Maltrail developers (https://github.com/stamparm/maltrail/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -10,6 +10,7 @@ import re
 class TrailsDict(dict):
     def __init__(self):
         self._trails = {}
+        self._regex = ""
         self._infos = []
         self._reverse_infos = {}
         self._references = []
@@ -25,9 +26,7 @@ class TrailsDict(dict):
         return key in self._trails
 
     def clear(self):
-        self._trails.clear()
-        self._infos = []
-        self._references = []
+        self.__init__()
 
     def keys(self):
         return self._trails.keys()
@@ -43,9 +42,10 @@ class TrailsDict(dict):
     def get(self, key, default=None):
         if key in self._trails:
             _ = self._trails[key].split(',')
-            return (self._infos[int(_[0])], self._references[int(_[1])])
-        else:
-            return default
+            if len(_) == 2:
+                return (self._infos[int(_[0])], self._references[int(_[1])])
+
+        return default
 
     def update(self, value):
         if isinstance(value, TrailsDict):
@@ -75,9 +75,10 @@ class TrailsDict(dict):
     def __getitem__(self, key):
         if key in self._trails:
             _ = self._trails[key].split(',')
-            return (self._infos[int(_[0])], self._references[int(_[1])])
-        else:
-            raise KeyError(key)
+            if len(_) == 2:
+                return (self._infos[int(_[0])], self._references[int(_[1])])
+
+        raise KeyError(key)
 
     def __setitem__(self, key, value):
         if isinstance(value, (tuple, list)):

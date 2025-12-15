@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2017 Miroslav Stampar (@stamparm)
+# Copyright (c) 2014-2025 Maltrail developers (https://github.com/stamparm/maltrail/)
 # See the file 'LICENSE' for copying permission
 
 # Reference: http://malwaretips.com/threads/connects-to-tor-hidden-services-through-tor2web.42274/
@@ -16,6 +16,13 @@ tor2web.blutmagie.de
 tor2web.org
 tor2web.ru
 tor-gateways.de
+
+# Reference: https://twitter.com/JiaYu_521/status/1263389123554848768
+
+tor2web.su
+tor2web.io
+tor2web.to
+tor2web.in
 
 # Reference: http://www.emergingthreats.net/products/etpro-ruleset/daily-ruleset-update-summary/daily-ruleset-update-summary-2015/03/11
 # Reference: http://www.emergingthreats.net/products/etpro-ruleset/daily-ruleset-update-summary/daily-ruleset-update-summary-2015/03/18
@@ -38,14 +45,24 @@ torpovider.org
 way2tor.com
 torgateway.org
 tor-explorer.org
+2kjb7.net
+2kjb8.net
 2kjb9.net
 2kjb10.net
-42k0b13.net
 42kjb11.net
+42kdb12.net
+42k0b13.net
+42k2b14.net
+79fhdm16.com
 
 # (note: just for (non-SOCKS) ONION domain lookups)
 
 .onion
+
+# Reference: https://www.virustotal.com/gui/ip-address/173.212.254.192/relations
+# Reference: https://www.virustotal.com/gui/file/678a67351a8caecb478c9d783bb4dbe666df16c9fca628b2355be0fc6bc348d9/detection
+
+173.212.254.192:31337
 
 # Misc
 
@@ -54,3 +71,9 @@ door2tor.org
 tor4pay.com
 pay4tor.com
 torsona.com
+onion.am
+onion.casa
+onion.pet
+onion.ws
+darknet.to
+tor2www.com

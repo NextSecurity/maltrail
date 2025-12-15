@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2014-2017 Miroslav Stampar (@stamparm)
+* Copyright (c) 2014-2025 Maltrail developers (https://github.com/stamparm/maltrail/)
 * See the file 'LICENSE' for copying permission
 */
 
@@ -9,7 +9,7 @@ var _THREATS = {};
 var _SOURCES = {};
 var _TOP_SOURCES = [];
 var _SOURCE_EVENTS = {};
-var _SEVERITY_COUNT = {}
+var _SEVERITY_COUNT = {};
 var _TRAILS = {};
 var _FLOOD_TRAILS = {};
 var _HOURS = {};
@@ -25,13 +25,16 @@ var IP_COUNTRY = {};
 var CHECK_IP = {};
 var TRAIL_TYPES = {};
 
-var SPARKLINE_WIDTH = 130;
+var CONTEXT_MENU_ROW = null;
+var SPARKLINE_WIDTH = 100;
 var CHART_WIDTH = screen.width - 200;
 var CHART_HEIGHT = screen.height - 340;
 var PIE_FONT_SIZE = 10;
-var MAX_SOURCES_ITEMS = 40;
+var MAX_SOURCES_ITEMS = 30;
 var FLOOD_TRAIL_THRESHOLD = 50;
 var LONG_TRAIL_THRESHOLD = 40;
+var MAX_CONDENSED_ITEMS = 100;
+var HIDDEN_THREAT_COUNT = 0;
 var OTHER_COLOR = "#999";
 var THREAT_INFIX = "~>";
 var FLOOD_THREAT_PREFIX = "...";
@@ -48,10 +51,15 @@ var DEFAULT_FONT_FAMILY = "Verdana, Geneva, sans-serif";
 var LOG_COLUMNS = { TIME: 0, SENSOR: 1, SRC_IP: 2, SRC_PORT: 3, DST_IP: 4, DST_PORT: 5, PROTO: 6, TYPE: 7, TRAIL: 8, INFO: 9, REFERENCE: 10 };
 var LOG_COLUMNS_SIZE = 0;
 var DATATABLES_COLUMNS = { THREAT: 0, SENSOR: 1, EVENTS: 2, SEVERITY: 3, FIRST_SEEN: 4, LAST_SEEN: 5, SPARKLINE: 6, SRC_IP: 7, SRC_PORT: 8, DST_IP: 9, DST_PORT: 10, PROTO: 11, TYPE: 12, TRAIL: 13, INFO: 14, REFERENCE: 15, TAGS: 16 };
-var PORT_NAMES = { 1: "tcpmux", 2: "nbp", 4: "echo", 6: "zip", 7: "echo", 9: "discard", 11: "systat", 13: "daytime", 15: "netstat", 17: "qotd", 18: "msp", 19: "chargen", 20: "ftp-data", 21: "ftp", 22: "ssh", 23: "telnet", 25: "smtp", 37: "time", 39: "rlp", 42: "nameserver", 43: "whois", 49: "tacacs", 50: "re-mail-ck", 53: "dns", 57: "mtp", 65: "tacacs-ds", 67: "bootps", 68: "bootpc", 69: "tftp", 70: "gopher", 77: "rje", 79: "finger", 80: "http", 87: "link", 88: "kerberos", 95: "supdup", 98: "linuxconf", 101: "hostnames", 102: "iso-tsap", 104: "acr-nema", 105: "csnet-ns", 106: "poppassd", 107: "rtelnet", 109: "pop2", 110: "pop3", 111: "sunrpc", 113: "auth", 115: "sftp", 117: "uucp-path", 119: "nntp", 123: "ntp", 129: "pwdgen", 135: "dcom-rpc", 137: "netbios-ns", 138: "netbios-dgm", 139: "netbios-ssn", 143: "imap2", 161: "snmp", 162: "snmp-trap", 163: "cmip-man", 164: "cmip-agent", 174: "mailq", 177: "xdmcp", 178: "nextstep", 179: "bgp", 191: "prospero", 194: "irc", 199: "smux", 201: "at-rtmp", 202: "at-nbp", 204: "at-echo", 206: "at-zis", 209: "qmtp", 210: "z3950", 213: "ipx", 220: "imap3", 345: "pawserv", 346: "zserv", 347: "fatserv", 369: "rpc2portmap", 370: "codaauth2", 371: "clearcase", 372: "ulistserv", 389: "ldap", 406: "imsp", 427: "svrloc", 443: "https", 444: "snpp", 445: "microsoft-ds", 464: "kpasswd", 465: "urd", 487: "saft", 500: "isakmp", 502: "modbus", 512: "exec", 513: "login", 514: "shell", 515: "printer", 517: "talk", 518: "ntalk", 520: "route", 525: "timed", 526: "tempo", 530: "courier", 531: "conference", 532: "netnews", 533: "netwall", 538: "gdomap", 540: "uucp", 543: "klogin", 544: "kshell", 546: "dhcpv6-client", 547: "dhcpv6-server", 548: "afpovertcp", 549: "idfp", 554: "rtsp", 556: "remotefs", 563: "nntps", 587: "submission", 607: "nqs", 610: "npmp-local", 611: "npmp-gui", 612: "hmmp-ind", 623: "ipmi", 628: "qmqp", 631: "ipp", 636: "ldaps", 655: "tinc", 706: "silc", 749: "kerberos-adm", 750: "kerberos4", 751: "kerberos-master", 752: "passwd-server", 754: "krb-prop", 760: "krbupdate", 765: "webster", 775: "moira-db", 777: "moira-update", 779: "moira-ureg", 783: "spamd", 808: "omirr", 871: "supfilesrv", 873: "rsync", 901: "swat", 989: "ftps-data", 990: "ftps", 992: "telnets", 993: "imaps", 994: "ircs", 995: "pop3s", 1001: "customs", 1080: "socks", 1093: "proofd", 1094: "rootd", 1099: "rmiregistry", 1109: "kpop", 1127: "supfiledbg", 1178: "skkserv", 1194: "openvpn", 1210: "predict", 1214: "kazaa", 1236: "rmtcfg", 1241: "nessus", 1300: "wipld", 1313: "xtel", 1314: "xtelw", 1352: "lotusnote", 1433: "mssql", 1434: "ms-sql-m", 1524: "ingreslock", 1525: "prospero-np", 1529: "support", 1645: "datametrics", 1646: "sa-msg-port", 1649: "kermit", 1677: "groupwise", 1701: "l2f", 1723: "pptp", 1812: "radius", 1813: "radius-acct", 1863: "msnp", 1900: "upnp", 1957: "unix-status", 1958: "log-server", 1959: "remoteping", 2000: "cisco-sccp", 2003: "cfinger", 2010: "search", 2049: "nfs", 2053: "knetd", 2086: "gnunet", 2101: "rtcm-sc104", 2102: "zephyr-srv", 2103: "zephyr-clt", 2104: "zephyr-hm", 2105: "eklogin", 2111: "kx", 2119: "gsigatekeeper", 2121: "iprop", 2135: "gris", 2150: "ninstall", 2401: "cvspserver", 2430: "venus", 2431: "venus-se", 2432: "codasrv", 2433: "codasrv-se", 2583: "mon", 2600: "zebrasrv", 2601: "zebra", 2602: "ripd", 2603: "ripngd", 2604: "ospfd", 2605: "bgpd", 2606: "ospf6d", 2607: "ospfapi", 2608: "isisd", 2628: "dict", 2792: "f5-globalsite", 2811: "gsiftp", 2947: "gpsd", 2988: "afbackup", 2989: "afmbackup", 3050: "gds-db", 3128: "squid", 3130: "icpv2", 3260: "iscsi-target", 3306: "mysql", 3389: "rdesktop", 3493: "nut", 3632: "distcc", 3689: "daap", 3690: "svn", 4031: "suucp", 4094: "sysrqd", 4190: "sieve", 4224: "xtell", 4353: "f5-iquery", 4369: "epmd", 4373: "remctl", 4500: "ipsec-nat-t", 4557: "fax", 4559: "hylafax", 4569: "iax", 4600: "distmp3", 4691: "mtn", 4899: "radmin-port", 4949: "munin", 5002: "rfe", 5050: "mmcc", 5051: "enbd-cstatd", 5052: "enbd-sstatd", 5060: "sip", 5061: "sip-tls", 5151: "pcrd", 5190: "aol", 5222: "xmpp-client", 5269: "xmpp-server", 5308: "cfengine", 5351: "nat-pmp", 5353: "mdns", 5354: "noclog", 5355: "hostmon", 5357: "wsdapi", 5432: "postgresql", 5555: "rplay", 5556: "freeciv", 5631: "pc-anywhere", 5666: "nrpe", 5667: "nsca", 5672: "amqp", 5674: "mrtd", 5675: "bgpsim", 5680: "canna", 5688: "ggz", 5800: "vnc", 5900: "vnc", 5901: "vnc-1", 5902: "vnc-2", 5903: "vnc-3", 6000: "x11", 6001: "x11-1", 6002: "x11-2", 6003: "x11-3", 6004: "x11-4", 6005: "x11-5", 6006: "x11-6", 6007: "x11-7", 6346: "gnutella-svc", 6347: "gnutella-rtr", 6379: "redis", 6444: "sge-qmaster", 6445: "sge-execd", 6446: "mysql-proxy", 6514: "syslog-tls", 6566: "sane-port", 6667: "ircd", 7000: "afs3-fileserver", 7001: "afs3-callback", 7002: "afs3-prserver", 7003: "afs3-vlserver", 7004: "afs3-kaserver", 7005: "afs3-volser", 7006: "afs3-errors", 7007: "afs3-bos", 7008: "afs3-update", 7009: "afs3-rmtsys", 7100: "font-service", 7547: "cwmp", 8021: "zope-ftp", 8080: "http-alt", 8081: "tproxy", 8088: "omniorb", 8118: "privoxy", 8338: "maltrail", 8339: "tsusen", 8443: "https-alt", 8990: "clc-build-daemon", 9098: "xinetd", 9101: "bacula-dir", 9102: "bacula-fd", 9103: "bacula-sd", 9200: "wap-wsp", 9359: "mandelspawn", 9418: "git", 9667: "xmms2", 9673: "zope", 10000: "webmin", 10050: "zabbix-agent", 10051: "zabbix-trapper", 10080: "amanda", 10081: "kamanda", 10082: "amandaidx", 10083: "amidxtape", 10809: "nbd", 11112: "dicom", 11201: "smsqp", 11211: "memcached", 11371: "hkp", 13720: "bprd", 13721: "bpdbm", 13722: "bpjava-msvc", 13724: "vnetd", 13782: "bpcd", 13783: "vopied", 15345: "xpilot", 17001: "sgi-cmsd", 17002: "sgi-crsd", 17003: "sgi-gcd", 17004: "sgi-cad", 17185: "vxworks", 17500: "db-lsp", 20011: "isdnlog", 20012: "vboxd", 22125: "dcap", 22128: "gsidcap", 22273: "wnn6", 24554: "binkp", 27017: "mongo", 27374: "asp", 30865: "csync2", 53413: "netis", 57000: "dircproxy", 60177: "tfido", 60179: "fido" };
+var PORT_NAMES = { 1: "tcpmux", 2: "nbp", 4: "echo", 6: "zip", 7: "echo", 9: "discard", 11: "systat", 13: "daytime", 15: "netstat", 17: "qotd", 18: "msp", 19: "chargen", 20: "ftp-data", 21: "ftp", 22: "ssh", 23: "telnet", 25: "smtp", 37: "time", 39: "rlp", 42: "nameserver", 43: "whois", 49: "tacacs", 50: "re-mail-ck", 53: "dns", 57: "mtp", 65: "tacacs-ds", 67: "bootps", 68: "bootpc", 69: "tftp", 70: "gopher", 77: "rje", 79: "finger", 80: "http", 87: "link", 88: "kerberos", 95: "supdup", 98: "linuxconf", 101: "hostnames", 102: "iso-tsap", 104: "acr-nema", 105: "csnet-ns", 106: "poppassd", 107: "rtelnet", 109: "pop2", 110: "pop3", 111: "sunrpc", 113: "auth", 115: "sftp", 117: "uucp-path", 119: "nntp", 123: "ntp", 129: "pwdgen", 135: "dcom-rpc", 137: "netbios-ns", 138: "netbios-dgm", 139: "netbios-ssn", 143: "imap2", 161: "snmp", 162: "snmp-trap", 163: "cmip-man", 164: "cmip-agent", 174: "mailq", 177: "xdmcp", 178: "nextstep", 179: "bgp", 191: "prospero", 194: "irc", 199: "smux", 201: "at-rtmp", 202: "at-nbp", 204: "at-echo", 206: "at-zis", 209: "qmtp", 210: "z3950", 213: "ipx", 220: "imap3", 345: "pawserv", 346: "zserv", 347: "fatserv", 369: "rpc2portmap", 370: "codaauth2", 371: "clearcase", 372: "ulistserv", 389: "ldap", 406: "imsp", 427: "svrloc", 443: "https", 444: "snpp", 445: "smb", 464: "kpasswd", 465: "urd", 487: "saft", 500: "isakmp", 502: "modbus", 512: "exec", 513: "login", 514: "shell", 515: "printer", 517: "talk", 518: "ntalk", 520: "route", 525: "timed", 526: "tempo", 530: "courier", 531: "conference", 532: "netnews", 533: "netwall", 538: "gdomap", 540: "uucp", 543: "klogin", 544: "kshell", 546: "dhcpv6-client", 547: "dhcpv6-server", 548: "afpovertcp", 549: "idfp", 554: "rtsp", 556: "remotefs", 563: "nntps", 587: "submission", 607: "nqs", 610: "npmp-local", 611: "npmp-gui", 612: "hmmp-ind", 623: "ipmi", 628: "qmqp", 631: "ipp", 636: "ldaps", 655: "tinc", 706: "silc", 749: "kerberos-adm", 750: "kerberos4", 751: "kerberos-master", 752: "passwd-server", 754: "krb-prop", 760: "krbupdate", 765: "webster", 775: "moira-db", 777: "moira-update", 779: "moira-ureg", 783: "spamd", 808: "omirr", 871: "supfilesrv", 873: "rsync", 901: "swat", 989: "ftps-data", 990: "ftps", 992: "telnets", 993: "imaps", 994: "ircs", 995: "pop3s", 1080: "socks", 1093: "proofd", 1094: "rootd", 1099: "rmiregistry", 1109: "kpop", 1127: "supfiledbg", 1178: "skkserv", 1194: "openvpn", 1210: "predict", 1214: "kazaa", 1236: "rmtcfg", 1241: "nessus", 1300: "wipld", 1313: "xtel", 1314: "xtelw", 1352: "lotusnote", 1433: "mssql", 1434: "ms-sql-m", 1524: "ingreslock", 1525: "prospero-np", 1529: "support", 1645: "datametrics", 1646: "sa-msg-port", 1649: "kermit", 1677: "groupwise", 1701: "l2f", 1723: "pptp", 1812: "radius", 1813: "radius-acct", 1863: "msnp", 1900: "upnp", 1957: "unix-status", 1958: "log-server", 1959: "remoteping", 2000: "cisco-sccp", 2003: "cfinger", 2010: "search", 2049: "nfs", 2053: "knetd", 2086: "gnunet", 2101: "rtcm-sc104", 2102: "zephyr-srv", 2103: "zephyr-clt", 2104: "zephyr-hm", 2105: "eklogin", 2111: "kx", 2119: "gsigatekeeper", 2121: "iprop", 2135: "gris", 2150: "ninstall", 2401: "cvspserver", 2430: "venus", 2431: "venus-se", 2432: "codasrv", 2433: "codasrv-se", 2583: "mon", 2600: "zebrasrv", 2601: "zebra", 2602: "ripd", 2603: "ripngd", 2604: "ospfd", 2605: "bgpd", 2606: "ospf6d", 2607: "ospfapi", 2608: "isisd", 2628: "dict", 2792: "f5-globalsite", 2811: "gsiftp", 2947: "gpsd", 2988: "afbackup", 2989: "afmbackup", 3050: "gds-db", 3128: "squid", 3130: "icpv2", 3260: "iscsi-target", 3306: "mysql", 3389: "rdesktop", 3493: "nut", 3632: "distcc", 3689: "daap", 3690: "svn", 4031: "suucp", 4094: "sysrqd", 4190: "sieve", 4224: "xtell", 4353: "f5-iquery", 4369: "epmd", 4373: "remctl", 4500: "ipsec-nat-t", 4557: "fax", 4559: "hylafax", 4569: "iax", 4600: "distmp3", 4691: "mtn", 4899: "radmin-port", 4949: "munin", 5002: "rfe", 5050: "mmcc", 5051: "enbd-cstatd", 5052: "enbd-sstatd", 5060: "sip", 5061: "sip-tls", 5151: "pcrd", 5190: "aol", 5222: "xmpp-client", 5269: "xmpp-server", 5308: "cfengine", 5351: "nat-pmp", 5353: "mdns", 5354: "noclog", 5355: "hostmon", 5357: "wsdapi", 5432: "postgresql", 5555: "rplay", 5556: "freeciv", 5631: "pc-anywhere", 5666: "nrpe", 5667: "nsca", 5672: "amqp", 5674: "mrtd", 5675: "bgpsim", 5680: "canna", 5688: "ggz", 5800: "vnc", 5900: "vnc", 5901: "vnc-1", 5902: "vnc-2", 5903: "vnc-3", 6000: "x11", 6001: "x11-1", 6002: "x11-2", 6003: "x11-3", 6004: "x11-4", 6005: "x11-5", 6006: "x11-6", 6007: "x11-7", 6346: "gnutella-svc", 6347: "gnutella-rtr", 6379: "redis", 6444: "sge-qmaster", 6445: "sge-execd", 6446: "mysql-proxy", 6514: "syslog-tls", 6566: "sane-port", 6667: "ircd", 7000: "afs3-fileserver", 7001: "afs3-callback", 7002: "afs3-prserver", 7003: "afs3-vlserver", 7004: "afs3-kaserver", 7005: "afs3-volser", 7006: "afs3-errors", 7007: "afs3-bos", 7008: "afs3-update", 7009: "afs3-rmtsys", 7100: "font-service", 7547: "cwmp", 8021: "zope-ftp", 8080: "http-alt", 8081: "tproxy", 8088: "omniorb", 8118: "privoxy", 8338: "maltrail", 8339: "tsusen", 8443: "https-alt", 8990: "clc-build-daemon", 9098: "xinetd", 9101: "bacula-dir", 9102: "bacula-fd", 9103: "bacula-sd", 9200: "wap-wsp", 9359: "mandelspawn", 9418: "git", 9667: "xmms2", 9673: "zope", 10000: "webmin", 10050: "zabbix-agent", 10051: "zabbix-trapper", 10080: "amanda", 10081: "kamanda", 10082: "amandaidx", 10083: "amidxtape", 10809: "nbd", 11112: "dicom", 11201: "smsqp", 11211: "memcached", 11371: "hkp", 13720: "bprd", 13721: "bpdbm", 13722: "bpjava-msvc", 13724: "vnetd", 13782: "bpcd", 13783: "vopied", 15345: "xpilot", 17001: "sgi-cmsd", 17002: "sgi-crsd", 17003: "sgi-gcd", 17004: "sgi-cad", 17185: "vxworks", 17500: "db-lsp", 20011: "isdnlog", 20012: "vboxd", 22125: "dcap", 22128: "gsidcap", 22273: "wnn6", 24554: "binkp", 27017: "mongo", 27374: "asp", 30865: "csync2", 53413: "netis", 57000: "dircproxy", 60177: "tfido", 60179: "fido" };
 var SEARCH_TIP_TIMER = 0;
+var DRAW_SPARKLINES_TIMER = 0;
 var PAPAPARSE_COMPLETE_TIMER = 0;
-var SEARCH_TIP_URL = "https://duckduckgo.com/?q=${query}";
+var REPORT_URL = "http://23.254.203.53/report.php"  // NOTE: Right click / Report false positive
+var SEARCH_TIP_URL = "https://www.vincentde.com/search?q=${query}"
+
+//var SEARCH_TIP_URL = "https://www.searchencrypt.com/search/?q=%22${query}%22";        // Reference: https://kinsta.com/blog/alternative-search-engines/
+//var SEARCH_TIP_URL = "https://duckduckgo.com/?q=${query}";
 //var SEARCH_TIP_URL = "https://www.google.com/cse?cx=011750002002865445766%3Ay5klxdomj78&ie=UTF-8&q=${query}";
 var DAY_SUFFIXES = { 1: "st", 2: "nd", 3: "rd" };
 var DOT_COLUMNS = [ LOG_COLUMNS.SENSOR, LOG_COLUMNS.SRC_PORT, LOG_COLUMNS.SRC_IP, LOG_COLUMNS.DST_IP, LOG_COLUMNS.DST_PORT, LOG_COLUMNS.TRAIL, LOG_COLUMNS.PROTO ];
@@ -66,11 +74,20 @@ var PREFERRED_TRAIL_COLORS = { DNS: "#3366cc", IP: "#dc3912", URL: "#ffad33", UA
 var SEVERITY = { LOW: 1, MEDIUM: 2, HIGH: 3 };
 var SEVERITY_COLORS = { 1: "#8ba8c0", 2: "#f0ad4e", 3: "#d9534f"};
 var CHART_TOOLTIP_FORMAT = "<%= datasetLabel %>: <%= value %>";
-var INFO_SEVERITY_KEYWORDS = { "malware": SEVERITY.HIGH, "ransomware": SEVERITY.HIGH, "reputation": SEVERITY.LOW, "attacker": SEVERITY.LOW, "spammer": SEVERITY.LOW, "compromised": SEVERITY.LOW, "crawler": SEVERITY.LOW, "scanning": SEVERITY.LOW }
+var INFO_SEVERITY_KEYWORDS = { "malware": SEVERITY.HIGH, "adversary": SEVERITY.HIGH, "ransomware": SEVERITY.HIGH, "reputation": SEVERITY.LOW, "attacker": SEVERITY.LOW, "spammer": SEVERITY.LOW, "compromised": SEVERITY.LOW, "crawler": SEVERITY.LOW, "scanning": SEVERITY.LOW }
 var STORAGE_KEY_ACTIVE_STATUS_BUTTON = "STORAGE_KEY_ACTIVE_STATUS_BUTTON";
+var STORAGE_KEY_EDIT_ALIASES = "STORAGE_KEY_EDIT_ALIASES";
+var STORAGE_KEY_HIDDEN_THREATS = "STORAGE_KEY_HIDDEN_THREATS";
 var COMMA_ENCODE_TRAIL_TYPES = { UA: true, URL: true};
 var TOOLTIP_FOLDING_REGEX = /([^\s]{60})/g;
 var REPLACE_SINGLE_CLOUD_WITH_BRACES = false;
+var IP_ALIASES = {};
+var DEMO = false;
+
+$("body").loader("show");
+$("#graph_close").on("click", graphClose);
+$("#spanToggleHeatmap").on("click", toggleHeatmap);
+$("#logo").on("click", resetView);
 
 for (var column in LOG_COLUMNS) if (LOG_COLUMNS.hasOwnProperty(column)) LOG_COLUMNS_SIZE++;
 
@@ -89,17 +106,45 @@ window.onkeyup = function(event) {
     CTRL_CLICK_PRESSED = false;
 };
 
++// Handle window resize to adjust table
+$(window).resize(function() {
+    if (typeof $.fn.dataTable !== 'undefined') {
+        $('#details').DataTable().columns.adjust();
+    }
+});
+
 // Retrieve (and parse) log data
 $(document).ready(function() {
     $("#noscript").remove();
+    // assign buttons
+    $("#btnDrawThreats").on("click", function() {
+        drawInfo("Threats");
+    });
+    $("#btnDrawEvents").on("click", function() {
+        drawInfo("Events");
+    });
+    $("#btnDrawSeverity").on("click", function() {
+        drawInfo("Severity");
+    });
+    $("#btnDrawSources").on("click", function() {
+        drawInfo("Sources");
+    });
+    $("#btnDrawTrails").on("click", function() {
+        drawInfo("Trails");
+    });
 
     // Reference: http://tosbourn.com/a-fix-for-window-location-origin-in-internet-explorer/
     if (!window.location.origin)
         window.location.origin = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port: '');
 
-    initCalHeatmap();
-    initDialogs();
+    DEMO = !window.location.origin.startsWith('http') || (window.location.origin == "https://maltraildemo.github.io");
 
+    if (!DEMO) {
+        initCalHeatmap();
+        initDialogs();
+    }
+
+    Papa.SCRIPT_PATH = "/js/papaparse.min.js"
     Papa.RemoteChunkSize = CHUNK_SIZE; // 10 MB (per one chunk request)
 
     Chart.defaults.global.tooltipFontFamily = DEFAULT_FONT_FAMILY;
@@ -112,6 +157,38 @@ $(document).ready(function() {
     $("#graph_close").css("left", CHART_WIDTH / 2 - 11)
 
     init(location.origin + "/events?date=" + formatDate(new Date()), new Date());
+
+    // Reference: https://stackoverflow.com/a/20471268
+    $(document).bind("mousedown", function (e) {
+        if (!$(e.target).parents(".custom-menu").length > 0) {
+            $(".custom-menu").hide(100);
+        }
+    });
+
+    $(".custom-menu li").click(function() {
+        var table = $("#details").dataTable();
+        var hidden_threats = $.jStorage.get(STORAGE_KEY_HIDDEN_THREATS, {});
+        var threat = $(CONTEXT_MENU_ROW).find("td:first").text();
+
+        switch ($(this).attr("data-action")) {
+            case "hide_threat":
+                hidden_threats[threat] = true;
+                HIDDEN_THREAT_COUNT += 1;
+                $.jStorage.set(STORAGE_KEY_HIDDEN_THREATS, hidden_threats);
+                table.api().row(CONTEXT_MENU_ROW).remove().draw();
+                break;
+            case "report_false_positive":
+                $.ajax({
+                    type: "POST",
+                    url: REPORT_URL,
+                    data: $(CONTEXT_MENU_ROW).find("td").map(function() { return $(this).text(); }).get().join('|'),
+                    success: function(result) { alertify.success("Threat successfully reported to developers"); }
+                })
+                break;
+        }
+
+        $(".custom-menu").hide(100);
+    });
 });
 
 function initDialogs() {
@@ -165,8 +242,11 @@ function initDialogs() {
 
     $("#login_link").click(function() {
         $("body").loader("hide");
-        if ($("#login_dialog").length === 0)
-            $('<div id="login_dialog" title="Authentication"><table><tbody><tr><td>Username:</td><td><input id="username" name="username"></td></tr><tr><td>Password:</td><td><input id="password" name="password" type="password" autocomplete="off"></td></tr></tbody></table></div>').appendTo('body').dialog(options);
+        if ($("#login_dialog").length === 0) {
+            $('<div id="login_dialog" title="Authentication"><table><tbody><tr><td style="display: inline-block !important">Username:</td><td style="display: inline-block !important"><input id="username" name="username"></td></tr><tr><td style="display: inline-block !important">Password:</td><td style="display: inline-block !important"><input id="password" name="password" type="password" autocomplete="off"></td></tr></tbody></table></div>').appendTo('body').dialog(options);
+        } else {
+            $("#login_dialog").dialog("open");
+        }
         $("#login_dialog input").val("");
         $("#login_dialog").dialog("open")
         .keyup(function(e) {
@@ -178,6 +258,10 @@ function initDialogs() {
         });
     });
 }
+
+$(window).resize(function() {
+    $("#login_dialog").dialog("option", "position", {my: "center", at: "center", of: window});
+});
 
 function checkAuthentication() {
     $.ajax({
@@ -193,11 +277,25 @@ function checkAuthentication() {
             }
             else if ((response.status === 200) && (typeof response.responseText !== "undefined") && (response.responseText.length > 0)) {
                 _USER = response.responseText;
-                $("#login_link").html("Log Out (" + _USER + ")");
-                $("#login_link").off("click");
-                $("#login_link").click(function() {
-                    window.location.href = "logout";
-                });
+                if (_USER !== '?') {
+                    $("#login_link").html("Log Out (" + _USER + ")");
+                    $("#login_link").off("click");
+                    $("#login_link").click(function() {
+                        window.location.href = "logout";
+                    });
+                }
+                else {
+                    $("#login_link").html("");
+                }
+
+                if (window.location.search) {
+                    var refresh = window.location.search.match(/refresh=(\d+)/);
+                    if ((refresh !== null) && (parseInt(refresh[1]) > 0)) {
+                        setTimeout(function(){
+                            window.location.reload(true);
+                        }, 1000 * parseInt(refresh[1]));
+                    }
+                }
             }
             else if (window.location.origin.startsWith('http')) {
                 _USER = "";
@@ -221,7 +319,7 @@ function toggleHeatmap() {
 }
 
 function graphClose() {
-    $('#chart_area').empty();
+    $("#chart_area").empty();
     resetStatusButtons();
 }
 
@@ -312,6 +410,17 @@ function isLocalAddress(ip) {
         return false;
 }
 
+// Reference: https://www.w3resource.com/javascript-exercises/javascript-array-exercise-4.php
+var last = function(array, n) {
+    if (array == null)
+        return void 0;
+
+    if (n == null)
+        return array[array.length - 1];
+
+    return array.slice(Math.max(array.length - n, 0));
+};
+
 var entityMap = {
     "&": "&amp;",
     "<": "&lt;",
@@ -395,7 +504,7 @@ function getThreatUID(threat) {  // e.g. 192.168.0.1~>shv4.no-ip.biz
 }
 
 function resetView() {
-    var table = $('#details').dataTable();
+    var table = $("#details").dataTable();
 
     $("body").loader("show");
 
@@ -411,7 +520,6 @@ function resetView() {
 
 function init(url, from, to) {
     var csv = "";
-    var demo = false;
 
     document.title = "Maltrail (loading...)";
     $("body").loader("show");
@@ -437,22 +545,10 @@ function init(url, from, to) {
     for (var severity in SEVERITY)
         _SEVERITY_COUNT[SEVERITY[severity]] = 0;
 
-    if (!(window.location.origin.startsWith('http'))) {
-        demo = true;
-
+    if (DEMO) {
         $(".bottom").html($(".bottom").html().replace(/ \(.+\)/, ""));
 
-        try {
-            // Reference: http://stackoverflow.com/a/7083594
-            $.ajaxSetup({ async: false });
-            $.getScript("js/demo.js");
-            $.ajaxSetup({ async: true });
-
-            csv = getDemoCSV();
-        }
-        catch(err) {
-            alert("Please use Firefox to be able to show demo data");
-        }
+        csv = getDemoCSV();
 
         $("#login_link").toggleClass("hidden", true);
         $("#login_splitter").toggleClass("hidden", true);
@@ -460,26 +556,26 @@ function init(url, from, to) {
     else {
         $("#login_link").toggleClass("hidden", false);
         $("#login_splitter").toggleClass("hidden", false);
+
+        $.ajax({
+            type: "GET",
+            url: "ping",
+            dataType: "text",
+            cache: false,
+            complete: function(response) {
+                if ((typeof response.responseText === "undefined") || (response.responseText.length === 0))
+                    alertify.error("No connection to the server");
+                else
+                    checkAuthentication();
+            }
+        });
     }
 
-    $.ajax({
-        type: "GET",
-        url: "ping",
-        dataType: "text",
-        cache: false,
-        complete: function(response) {
-            if ((typeof response.responseText === "undefined") || (response.responseText.length === 0))
-                alertify.error("No connection to the server");
-            else
-                checkAuthentication();
-        }
-    });
-
-    Papa.parse(demo ? csv : url, {
-        download: !demo,
+    Papa.parse(DEMO ? csv : url, {
+        download: !DEMO,
         delimiter: ' ',
         //newline: '\n',
-        worker: !demo,
+        worker: !DEMO,
         skipEmptyLines: true,
         chunk: function(results) {
             var title = document.title.replace(/\s?\.\s?/g, '.');
@@ -535,7 +631,8 @@ function init(url, from, to) {
             }
 
             for (var i = 0; i < results.data.length; i++) {
-                var data = results.data[i], threat_text, threat_data, match, _;
+                var threat_text, threat_data, match, _;
+                var data = results.data[i]
 
                 if (data.length !== LOG_COLUMNS_SIZE)
                     continue;
@@ -573,9 +670,18 @@ function init(url, from, to) {
                 if (!(threat_text in _THREATS))
                     threat_data = _THREATS[threat_text] = [1, [time], time, time, data];  // count, times, minTime, maxTime, (threat)data
                 else {
+                    match = time.match(/ (\d+:\d+)/);
+
                     threat_data = _THREATS[threat_text];
                     threat_data[0] += 1;
-                    threat_data[1].push(time);
+
+                    if (match !== null)
+                        reduced = time.match(/ (\d+:\d+)/)[1];
+                    else
+                        reduced = time;
+
+                    if (reduced != last(threat_data[1]))
+                        threat_data[1].push(reduced);
 
                     if (time < threat_data[2])
                         threat_data[2] = time;
@@ -595,9 +701,12 @@ function init(url, from, to) {
 
                             if (condensed) {
                                 var parts = original.split(',');
-                                for (var k = 0; k < parts.length; k++) {
+                                for (var k = 0; k < Math.min(parts.length, MAX_CONDENSED_ITEMS); k++) {
                                     _[column][parts[k]] = true;
                                 }
+
+                                if (parts.length > MAX_CONDENSED_ITEMS)
+                                    _[column]["..."] = true;
                             }
                             else
                                 _[column][original] = true;
@@ -606,12 +715,20 @@ function init(url, from, to) {
                         if (typeof data[column] === "string") {
                             if (condensed) {
                                 var parts = data[column].split(',');
+
                                 for (var k = 0; k < parts.length; k++) {
-                                    _[column][parts[k]] = true;
+                                    if (Object.keys(_[column]).length >= MAX_CONDENSED_ITEMS)
+                                        _[column]["..."] = true;
+                                    else
+                                        _[column][parts[k]] = true;
                                 }
                             }
-                            else
-                                _[column][data[column]] = true;
+                            else {
+                                if (Object.keys(_[column]).length < MAX_CONDENSED_ITEMS)
+                                    _[column][data[column]] = true;
+                                else
+                                    _[column]["..."] = true;
+                            }
                         }
                     }
                 }
@@ -654,10 +771,18 @@ function init(url, from, to) {
         complete: function() {
             clearTimeout(PAPAPARSE_COMPLETE_TIMER);
             PAPAPARSE_COMPLETE_TIMER = setTimeout(function() {
+                var hidden_threats = $.jStorage.get(STORAGE_KEY_HIDDEN_THREATS, {});
+
                 // threat sensor first_time last_time count src_ip src_port dst_ip dst_port proto type trail info reference tags
                 for (var threat_text in _THREATS) {
                     var threatUID = getThreatUID(threat_text);
                     var threat_data = _THREATS[threat_text];
+
+                    // Skip invalid threat data
+                    if (!threat_data || threat_data.length < 5) {
+                        continue;
+                    }
+
                     var count = threat_data[0];
                     var times = threat_data[1];
                     var minTime = threat_data[2];
@@ -669,6 +794,11 @@ function init(url, from, to) {
 
                     var stored_locally = $.jStorage.get(threatUID);
                     var tagData = "";
+
+                    if (threatUID in hidden_threats) {
+                        HIDDEN_THREAT_COUNT += 1;
+                        continue;
+                    }
 
                     if (stored_locally !== null)
                         tagData = stored_locally.tagData;
@@ -760,7 +890,7 @@ function init(url, from, to) {
                         severity = SEVERITY.HIGH;
                     else if (data[LOG_COLUMNS.INFO].contains("malware distribution"))
                         severity = SEVERITY.MEDIUM;
-                    else if (data[LOG_COLUMNS.INFO].contains( "mass scanner"))
+                    else if (data[LOG_COLUMNS.INFO].contains("mass scanner"))
                         severity = SEVERITY.LOW;
                     else {
                         for (var keyword in INFO_SEVERITY_KEYWORDS)
@@ -772,16 +902,16 @@ function init(url, from, to) {
 
                     _SEVERITY_COUNT[severity] += 1;
 
-                    row = [threatUID, data[LOG_COLUMNS.SENSOR], times, severity, minTime, maxTime, sparkline_data.join(","), data[LOG_COLUMNS.SRC_IP], data[LOG_COLUMNS.SRC_PORT], data[LOG_COLUMNS.DST_IP], data[LOG_COLUMNS.DST_PORT], data[LOG_COLUMNS.PROTO], data[LOG_COLUMNS.TYPE], data[LOG_COLUMNS.TRAIL], data[LOG_COLUMNS.INFO], data[LOG_COLUMNS.REFERENCE], tagData];
+                    row = [threatUID, data[LOG_COLUMNS.SENSOR], [count, times], severity, minTime, maxTime, sparkline_data.join(","), data[LOG_COLUMNS.SRC_IP], data[LOG_COLUMNS.SRC_PORT], data[LOG_COLUMNS.DST_IP], data[LOG_COLUMNS.DST_PORT], data[LOG_COLUMNS.PROTO], data[LOG_COLUMNS.TYPE], data[LOG_COLUMNS.TRAIL], data[LOG_COLUMNS.INFO], data[LOG_COLUMNS.REFERENCE], tagData];
 
                     _DATASET.push(row);
                 }
 
-                if (demo) {
+                if (DEMO) {
                     alertify.log("Showing demo data");
 
                     document.title = "Maltrail (demo)";
-                    $("#period_label").html("demo");
+                    $("#period_label").html("(demo)");
                 }
                 else {
                     if (_DATASET.length > 0)
@@ -791,9 +921,9 @@ function init(url, from, to) {
 
                     var period = "";
 
-                    if (typeof from !== 'undefined') {
+                    if (typeof from !== "undefined") {
                         period += formatDate(from);
-                        if (typeof to !== 'undefined')
+                        if (typeof to !== "undefined")
                             period += "_" + formatDate(to);
                     }
 
@@ -808,6 +938,9 @@ function init(url, from, to) {
 
                     $("#period_label").html("<b>" + period + "</b> (" + _ + ")");
                 }
+
+                if (HIDDEN_THREAT_COUNT > 0)
+                    alertify.log(HIDDEN_THREAT_COUNT + " threats are hidden in details table");
 
                 try {
                     initDetails();
@@ -869,6 +1002,9 @@ function makeMask(bits) {
 }
 
 function netmaskValidate(netmask) {
+    if (!netmask || typeof netmask !== 'string') {
+        return false;
+    }
     var match = netmask.match(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/\d{1,2}$/);
     return match !== null;
 }
@@ -881,7 +1017,7 @@ function searchTipToTab(query) {
         // Browser has allowed it to be opened
         win.focus();
     } else {
-        // Broswer has blocked it
+        // Browser has blocked it
         alert('Please allow popups for this site');
     }
 }
@@ -900,7 +1036,7 @@ function tagInputKeyUp(event, forcedelete) {
                 _DELETE_DELETE_PRESS = true;
                 return;
             }
-            table = $('#details').dataTable();
+            table = $("#details").dataTable();
             position = table.fnGetPosition(event.target.parentNode);
             tagData = table.fnGetData(event.target.parentNode);
 
@@ -922,7 +1058,7 @@ function tagInputKeyUp(event, forcedelete) {
     }
     else if ((typeof event.keyCode === "undefined") || (event.keyCode === 13)) {  // blur or Enter
         if (newTag.length > 0) {
-            table = $('#details').dataTable();
+            table = $("#details").dataTable();
             newTag = newTag.replace(/[^a-zA-Z0-9_]/g, "");
             position = table.fnGetPosition(event.target.parentNode);
             tagData = table.fnGetData(event.target.parentNode);
@@ -946,7 +1082,15 @@ function tagInputKeyUp(event, forcedelete) {
 
         data[DATATABLES_COLUMNS.TAGS] = tagData;
 
-        row.invalidate();
+        // dirty patch for #14900 (reproducible on Chromium - blur being thrown after the Enter has been processed)
+        try {
+            if (row && typeof row.invalidate === 'function') {
+                row.invalidate();
+            }
+        } catch(err) {
+            console.log("Table redraw issue:", err.message);
+        }
+
         api.draw(false);
     }
 }
@@ -978,8 +1122,7 @@ function _sort(obj) {
 
 function _ipSortingValue(a) {
     var x = "";
-
-    match = a.match(/\d+\.\d+\.\d+\.\d+/);
+    var match = a.match(/\d+\.\d+\.\d+\.\d+/);
     if (match !== null) {
         var m = match[0].split(".");
 
@@ -1005,32 +1148,34 @@ function _ipCompareValues(a, b) {
 }
 
 function copyEllipsisToClipboard(event) {
-    var target = $(event.target);
-    var text = target.parent().title;
-    var html = target.parent().html();
-    var left = html.search(/^<[^>]*ellipsis/) !== -1;
-    var common = html.replace(/<span class="ipcat">[^<]+<\/span>/g, "").replace(/<[^>]+>/g, "");
-    if (!text) {
-        var tooltip = $(".ui-tooltip");
-        if (tooltip.length > 0) {
-            text = tooltip.text();
+    if (event.button === 0) {  // left mouse button
+        var target = $(event.target);
+        var text = target.parent().title || '';
+        var html = target.parent().html() || '';
+        var left = html.search(/^<[^>]*ellipsis/) !== -1;
+        var common = html.replace(/<span class="(ipcat|hidden)">[^<]+<\/span>/g, "").replace(/<[^>]+>/g, "");
+        if (!text) {
+            var tooltip = $(".ui-tooltip");
+            if (tooltip.length > 0) {
+                text = tooltip.text();
 
-            if (common) {
-                var _ = text.split(DATA_PARTS_DELIMITER);
-                for (var i = 0; i < _.length; i++) {
-                    if (left)
-                        _[i] += common;
-                    else {
-                        if (!common.endsWith(' '))
-                            _[i] = common + _[i];
+                if (common) {
+                    var _ = text.split(DATA_PARTS_DELIMITER);
+                    for (var i = 0; i < _.length; i++) {
+                        if (left)
+                            _[i] += common;
+                        else {
+                            if (!common.endsWith(' '))
+                                _[i] = common + _[i];
+                        }
                     }
+                    text = _.join(DATA_PARTS_DELIMITER);
                 }
-                text = _.join(DATA_PARTS_DELIMITER);
             }
+            tooltip.remove();
         }
-        tooltip.remove();
+        window.prompt("Copy details to clipboard (press Ctrl+C)", text);
     }
-    window.prompt("Copy details to clipboard (press Ctrl+C)", text);
 }
 
 function copyEventsToClipboard(event) {
@@ -1041,7 +1186,7 @@ function copyEventsToClipboard(event) {
 
 function appendFilter(filter, event, istag) {
     try {
-        var table = $('#details').dataTable();
+        var table = $("#details").dataTable();
         var currentFilter = table.api().search();
 
         // Reference: http://stackoverflow.com/a/3076685
@@ -1070,6 +1215,7 @@ function appendFilter(filter, event, istag) {
         $(".searchtip").remove();
         clearTimeout(SEARCH_TIP_TIMER);
         $(".ui-tooltip").remove();
+        $(".custom-menu").hide();
         $('#details_filter label input').get(0).scrollLeft = $('#details_filter label input').get(0).scrollWidth;
         //$('#details_filter label input').get(0).focus();
     }
@@ -1079,7 +1225,7 @@ function appendFilter(filter, event, istag) {
 
 // DataTables part
 function initDetails() {
-    var details = $('#details').dataTable( {
+    var details = $("#details").dataTable( {
         bDestroy: true,
         bAutoWidth: false,
         bStateSave: true,
@@ -1180,6 +1326,16 @@ function initDetails() {
                 render: function (data, type, row) {
                     if (data.indexOf(',') > -1)
                         data = "<span title='" + data + "' class='ellipsis'></span>";
+                    else if (data in IP_ALIASES) {
+                        data = "<span class='ipcat'>" + IP_ALIASES[data] + "</span>" + data;
+                    }
+                    else {
+                        var stored = $.jStorage.get(STORAGE_KEY_EDIT_ALIASES);
+                        if (stored !== null) {
+                            if (data in stored)
+                                data = "<span class='ipcat'>" + escapeHtml(stored[data]) + "</span>" + data;
+                        }
+                    }
                     return data;
                 },
                 targets: [ DATATABLES_COLUMNS.SRC_IP, DATATABLES_COLUMNS.DST_IP ]
@@ -1203,7 +1359,7 @@ function initDetails() {
                         var title = "";
                         var left = false;
 
-                        if (data.indexOf('(') > -1) {
+                        if ((data.indexOf('(') > -1) && (data.indexOf(')') > -1)) {
                             var parts = data.split(DATA_PARTS_DELIMITER);
                             for (var i = 0; i < parts.length; i++) {
                                 var index = parts[i].indexOf('(');
@@ -1263,7 +1419,7 @@ function initDetails() {
             },
             {
                 render: function ( data, type, row ) {
-                    return '<div class="event-data">' + data.length + '</div><span class="hidden">' + data.join(DATA_PARTS_DELIMITER) + '</span>';
+                    return '<div class="event-data">' + data[0] + '</div><span class="hidden">' + data[1].join(DATA_PARTS_DELIMITER) + '</span>';
                 },
                 targets: DATATABLES_COLUMNS.EVENTS
             },
@@ -1277,10 +1433,14 @@ function initDetails() {
             {
                 render: function (data, type, row) {
                     var parts = data.split(' ');
-                    var day = parts[0].split('-')[2];
-                    var dayint = parseInt(day);
-                    var suffix = (dayint > 10 && dayint < 20) ? "th" : DAY_SUFFIXES[dayint % 10] || "th";
-                    return "<div title='" + data + "'><span class='time-day'>" + day + "<sup>" + suffix + "</sup></span> " + parts[1].split('.')[0] + "</div>";
+                    if (parts.length > 1) {
+                        var day = parts[0].split('-')[2];
+                        var dayint = parseInt(day);
+                        var suffix = (dayint > 10 && dayint < 20) ? "th" : DAY_SUFFIXES[dayint % 10] || "th";
+                        return "<div title='" + data + "'><span class='time-day'>" + day + "<sup>" + suffix + "</sup></span> " + parts[1].split('.')[0] + "</div>";
+                    }
+                    else
+                        return data;
                 },
                 targets: [ DATATABLES_COLUMNS.FIRST_SEEN, DATATABLES_COLUMNS.LAST_SEEN ]
             },
@@ -1314,7 +1474,7 @@ function initDetails() {
                         if (duplicates !== null) {
                             var items = duplicates[1].split(',');
                             data = data.replace(duplicates[0], "");
-                            return ((data.substr(0, 1) != '(') ? '<i>' + data + '</i>': data) + '<span title="' + duplicates[1].replace(/,([^ ])/g, ", $1") + '" class="duplicates">+' + items.length + '</span>';
+                            return ((data.substr(0, 1) != '(') ? '<i>' + data + '</i>': data) + '<span title="' + duplicates[1].replace(/,([^ ])/g, ", $1") + '" class="duplicates">+' + items.length + '</span>' + '<span class="searchable">' + duplicates[1] + "</span>";
                         }
                     }
                     return (data.substr(0, 1) != '(') ? '<i>' + data + '</i>': data;
@@ -1331,7 +1491,7 @@ function initDetails() {
                             retval += getTagHtml(tag);
                         }
                     }
-                    retval += "<input class='tag-input' type='text' onkeyup='tagInputKeyUp(event)' onblur='tagInputKeyUp(event)'>";
+                    retval += "<input class='tag-input' type='text'>";
                     return retval;
                 },
                 targets: DATATABLES_COLUMNS.TAGS
@@ -1357,7 +1517,7 @@ function initDetails() {
                     sExtends: "text",
                     sButtonText: "Clear",
                     fnClick: function (nButton, oConfig, oFlash) {
-                        var table = $('#details').dataTable();
+                        var table = $("#details").dataTable();
                         var settings = table.fnSettings();
                         table.fnFilter("");
 //                         if ((settings._iDisplayLength > 0) && (settings._iDisplayLength < 30))
@@ -1371,41 +1531,58 @@ function initDetails() {
                     aButtons: [
                         {
                             sExtends: "text",
-                            sButtonText: "Edit hosts",
+                            sButtonText: "Edit custom IP aliases",
                             fnClick: function ( nButton, oConfig, oFlash ) {
-                                function _initHosts() {
-                                    $('#table_hosts').editableTableWidget();
-                                    $('#table_hosts td').on('change', function(event, newValue) {
+                                function _initAliases() {
+                                    $('#table_aliases').editableTableWidget();
+                                    $('#table_aliases td').on('change', function(event, newValue) {
                                         if (event.target.cellIndex === 0)
                                             return (newValue.match(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/) !== null);
-                                        else if (event.target.cellIndex === 1)
-                                            return (newValue.match(/^[A-Za-z0-9\ ._]+$/) !== null);
                                     });
                                 };
-                                $('<div id="dialog-hosts" title="Hosts"></div>').appendTo('body')
-                                .html('<table id="table_hosts" class="dataTable"><thead><tr class="ui-widget-header"><th>IP</th><th>Hostname</th></tr></thead><tbody><tr><td>127.0.0.1</td><td>localhost</td></tr></tbody></table>')
+
+                                var html = '<table id="table_aliases" class="dataTable"><thead><tr class="ui-widget-header"><th>IP</th><th>Alias</th></tr></thead><tbody>';
+                                var stored = $.jStorage.get(STORAGE_KEY_EDIT_ALIASES);
+                                if (stored !== null) {
+                                    $.each( stored, function( ip, alias ) {
+                                        html += '<tr class="alias"><td>' + ip + '</td><td>' + alias + '</td></tr>'
+                                    });
+                                }
+                                html += '</tbody></table>'
+
+                                $('<div id="dialog-aliases" title="Aliases"></div>').appendTo('body')
+                                .html(html)
                                 .dialog({
                                     resizable: false,
                                     width: "auto",
                                     height: "auto",
                                     modal: true,
                                     buttons: {
-                                        Close: function() {
-                                            $(this).dialog("close");
-                                            $('#dialog-hosts').remove();
-                                        },
                                         Add: function() {
-                                            $('#table_hosts tr:last').after('<tr class="host"><td>&nbsp;</td><td>&nbsp;</td></tr>');
-                                            _initHosts();
-                                            $("#table_hosts tr:last td:first").focus().click();
+                                            $('#table_aliases tr:last').after('<tr class="alias"><td>&nbsp;</td><td>&nbsp;</td></tr>');
+                                            _initAliases();
+                                            $("#table_aliases tr:last td:first").focus().click();
+                                        },
+                                        Done: function() {
+                                            $(this).dialog("close");
+                                            $('#dialog-aliases').remove();
+                                            window.location.reload(false);
                                         }
                                     },
                                     open: function(event, ui) {
-                                        _initHosts();
+                                        _initAliases();
                                     },
                                     close: function(event, ui) {
-                                        //$('#table_hosts .host')
-                                        $(this).dialog('destroy').remove();
+                                        var result = {};
+                                        $(this).find(".alias").each(function() {
+                                            var ip = $(this).find("td").eq(0).text();
+                                            var alias = $(this).find("td").eq(1).text();
+                                            if ($.trim(ip) && $.trim(alias))
+                                                result[ip] = alias;
+                                        });
+                                        $.jStorage.set(STORAGE_KEY_EDIT_ALIASES, result);
+
+                                        $(this).dialog("destroy").remove();
                                     }
                                 });
                             }
@@ -1444,8 +1621,17 @@ function initDetails() {
         fnStateSaveParams: function (oSettings, oData) {
             oData.start = 0;
         },
-        fnDrawCallback: function( oSettings ) {
+        fnDrawCallback: function(oSettings) {
+            $(".ui-tooltip").remove();
+            $(".custom-menu").hide();
+            clearTimeout(DRAW_SPARKLINES_TIMER);
             $(".sparkline:contains(',')").sparkline('html', { type: 'bar', barWidth: 2, barColor: SPARKLINE_COLOR, disableInteraction: false, tooltipClassname: "sparkline-tooltip" }); //, chartRangeMin: 0, chartRangeMax: _MAX_SPARKLINE_PER_HOUR });
+
+            $(".tag-input").keyup(function(event) {
+                tagInputKeyUp(event);
+            }).blur(function(event) {
+                tagInputKeyUp(event);
+            });
 
             try {
                 var sparklines = $(".sparkline");
@@ -1453,7 +1639,9 @@ function initDetails() {
                         var hidden = sparklines.filter(".hidden");
                         hidden.filter(':lt(10)').removeClass("hidden");
                         $.sparkline_display_visible();
-                        hidden.length && setTimeout(drawSparklines, 100);
+                        if (hidden.length) {
+                            DRAW_SPARKLINES_TIMER = setTimeout(drawSparklines, 100);
+                        }
                     }
                 )();
             }
@@ -1534,7 +1722,7 @@ function initDetails() {
                 var img = "";
                 var ip = match[0];
 
-                if (!isLocalAddress(ip)) {
+                if (!DEMO && !isLocalAddress(ip)) {
                     if (!(ip in CHECK_IP)) {
                         CHECK_IP[ip] = null;
                         $.ajax("/check_ip?address=" + ip, { dataType: "jsonp", ip: ip, cell: cell })
@@ -1554,17 +1742,21 @@ function initDetails() {
                             cell.append($("<span class='worst_asns' title='malicious ASN'></span>").tooltip());
                     }
                     else {
-                        interval = setInterval(function(ip, cell){
-                            html = cell.html();
-                            if (CHECK_IP[ip] !== null) {
-                                if (html.indexOf("ipcat") === -1) {
-                                    var json = CHECK_IP[ip];
-                                    var span_ip = $(json.ipcat.length > 0 ? "<span class='ipcat'></span>" : "<span class='ipcat hidden'></span>").html(json.ipcat);
-                                    cell.append(span_ip);
-                                    if (json.worst_asns === "true")
-                                        cell.append($("<span class='worst_asns' title='malicious ASN'></span>").tooltip());
-                                }
+                        interval = setInterval(function(ip, cell) {
+                            if (typeof cell === "undefined")
                                 clearInterval(interval);
+                            else {
+                                html = cell.html();
+                                if (CHECK_IP[ip] !== null) {
+                                    if (html.indexOf("ipcat") === -1) {
+                                        var json = CHECK_IP[ip];
+                                        var span_ip = $(json.ipcat.length > 0 ? "<span class='ipcat'></span>" : "<span class='ipcat hidden'></span>").html(json.ipcat);
+                                        cell.append(span_ip);
+                                        if (json.worst_asns === "true")
+                                            cell.append($("<span class='worst_asns' title='malicious ASN'></span>").tooltip());
+                                    }
+                                    clearInterval(interval);
+                                }
                             }
                         }, 500, ip, cell);
                     }
@@ -1597,12 +1789,24 @@ function initDetails() {
                 if (!isLocalAddress(ip)) {
                     if (!(ip in IP_COUNTRY)) {
                         IP_COUNTRY[ip] = null;
-                        $.ajax("https://stat.ripe.net/data/geoloc/data.json?resource=" + ip, { dataType:"jsonp", ip: ip, cell: cell })
+                        $.ajax("https://stat.ripe.net/data/geoloc/data.json?resource=" + ip, { dataType:"jsonp", ip: ip, html: html, cell: cell })
                         .done(function(json) {
-                            var span_ip = $("<span title=''/>").html(this.ip + " ");
+                            var span_ip = $("<span title=''/>").html(this.html + " ");
+                            var country = null;
 
-                            if ((typeof json.data.locations !== "undefined") && (json.data.locations.length > 0) && (json.data.locations[0].country !== "ANO")) {
-                                IP_COUNTRY[this.ip] = json.data.locations[0].country.toLowerCase().split('-')[0];
+                            try {
+                                country = json.data.located_resources[0].locations[0].country.toLowerCase().split('-')[0];
+                            }
+                            catch(err) {
+                                try {
+                                    country = json.data.located_resources[0].location.toLowerCase().split('-')[0];
+                                }
+                                catch(err) {
+                                }
+                            }
+
+                            if ((country !== null) && (country !== "ano")) {
+                                IP_COUNTRY[this.ip] = country;
                                 img = '<img src="images/blank.gif" class="flag flag-' + IP_COUNTRY[this.ip] + '" title="' + IP_COUNTRY[this.ip].toUpperCase() + '">';
                             }
                             else {
@@ -1617,26 +1821,31 @@ function initDetails() {
                     else if (IP_COUNTRY[ip] !== null) {
                         img = ' <img src="images/blank.gif" class="flag flag-' + IP_COUNTRY[ip] + '" title="' + IP_COUNTRY[ip].toUpperCase() + '">';
 
-                        var span_ip = $("<span title=''/>").html(ip + " ");
+                        var span_ip = $("<span title=''/>").html(html + " ");
                         span_ip.tooltip(options);
 
-                        cell.html("").append(span_ip).append($(img).tooltip());
+                        if (typeof cell !== "undefined")
+                            cell.html("").append(span_ip).append($(img).tooltip());
                     }
                     else {
-                        interval = setInterval(function(ip, cell){
-                            html = cell.html();
-                            if (typeof html === "undefined")
+                        interval = setInterval(function(ip, cell) {
+                            if (typeof cell === "undefined")
                                 clearInterval(interval);
-                            else if (IP_COUNTRY[ip] !== null) {
-                                if (html.indexOf("flag-") === -1) {
-                                    img = ' <img src="images/blank.gif" class="flag flag-' + IP_COUNTRY[ip] + '" title="' + IP_COUNTRY[ip].toUpperCase() + '">';
+                            else {
+                                html = cell.html();
+                                if (typeof html === "undefined")
+                                    clearInterval(interval);
+                                else if (IP_COUNTRY[ip] !== null) {
+                                    if (html.indexOf("flag-") === -1) {
+                                        img = ' <img src="images/blank.gif" class="flag flag-' + IP_COUNTRY[ip] + '" title="' + IP_COUNTRY[ip].toUpperCase() + '">';
 
-                                    var span_ip = $("<span title=''/>").html(ip + " ");
-                                    span_ip.tooltip(options);
+                                        var span_ip = $("<span title=''/>").html(html + " ");
+                                        span_ip.tooltip(options);
 
-                                    cell.html("").append(span_ip).append($(img).tooltip());
+                                        cell.html("").append(span_ip).append($(img).tooltip());
+                                    }
+                                    clearInterval(interval);
                                 }
-                                clearInterval(interval);
                             }
                         }, 1000, ip, cell);
                     }
@@ -1658,10 +1867,10 @@ function initDetails() {
             clearTimeout(SEARCH_TIP_TIMER);
             SEARCH_TIP_TIMER = setTimeout(function(cell, event) {
                 if ((event.buttons === 0) && ($(".ui-tooltip").length === 0)) {
-                    var query = cell[0].innerHTML.replace(/<span class="ipcat.+span>/g, "").replace(/<[^>]+>/g, "").replace(/[()]/g, "").split('/')[0];
+                    var query = cell[0].innerHTML.replace(/<span class="ipcat.+span>/g, "").replace(/<[^>]+>/g, "").replace(/[\d.]+ \(([^)]+)\)/, "$1").replace(/[()]/g, "").replace(/^www\./g, "").replace(/:\d+$/, "").replace(/^([^\/]*\.[^\/]*)\/.+/, "$1").trim();
                     $(".searchtip").remove();
                     $("body").append(
-                        $('<div class="ui-tooltip searchtip"><div><img src="images/newtab.png" style="cursor: pointer" onclick="searchTipToTab(\'' + query + '\')" title="open in new tab"><img src="images/close.png" style="cursor: pointer; width: 16px; height: 16px" onclick="$(\'.searchtip\').remove()" title="close"></div><iframe src="' + SEARCH_TIP_URL.replace("${query}", query) + '"></iframe><div>')
+                        $('<div class="ui-tooltip searchtip"><div><img src="images/newtab.png" style="cursor: pointer" title="open in new tab"><img src="images/close.png" style="cursor: pointer; width: 16px; height: 16px" title="close"></div><iframe src="' + SEARCH_TIP_URL.replace("${query}", query) + '"></iframe><div>')
                         .css('position', 'absolute')
                         .show()
                         .position({ my: "right+10 top-200", of: event })
@@ -1669,6 +1878,8 @@ function initDetails() {
                             $(".searchtip").remove();
                         })
                     );
+                    $(".searchtip img[title='open in new tab']").on("click", function() { searchTipToTab(query); });
+                    $(".searchtip img[title='close']").on("click", function() { $(".searchtip").remove(); });
                 }
             }, 2000, $(this), event);
 
@@ -1685,7 +1896,7 @@ function initDetails() {
 
     details.off("dblclick");  // clear previous
     details.on("dblclick", "td", function (){
-        var table = $('#details').dataTable();
+        var table = $("#details").dataTable();
         var filter = "";
 
         if ($(this).find(".info-input").length > 0)
@@ -1707,7 +1918,7 @@ function initDetails() {
             }
         }
         else {
-            filter = this.innerHTML.replace(/<span class="ipcat">.+/g, "").replace(/<.+?>/g, " ");
+            filter = this.innerHTML.replace(/<span class="ipcat">.+?<\/span>/g, "").replace(/<.+?>/g, " ");
         }
 
         filter = filter.replace(/\s+/g, " ").trim();
@@ -1738,18 +1949,38 @@ function initDetails() {
     details.on("mouseup", ".ellipsis", copyEllipsisToClipboard);
 
     details.off("contextmenu");  // clear previous
-    details.on("contextmenu", "td", function (){
-        return false;
+    details.on("contextmenu", "td", function (event) {
+        event.preventDefault();
+
+        $(".ui-tooltip").remove();
+        CONTEXT_MENU_ROW = $(event.target).closest("tr");
+
+        // Show contextmenu
+        $(".custom-menu").finish().toggle(100).
+
+        // In the right position (the mouse)
+        css({
+            top: event.pageY + "px",
+            left: event.pageX + "px"
+        });
     });
 }
 
 function generateNonce() {
-    var retval = "";
-
-    for(var i = 0; i < NONCE_LENGTH; i++)
-        retval += NONCE_ALPHABET.charAt(Math.floor(Math.random() * NONCE_ALPHABET.length));
-
-    return retval;
+    if (window.crypto && window.crypto.getRandomValues) {
+        const array = new Uint32Array(1);
+        const result = [];
+        for (let i = 0; i < NONCE_LENGTH; i++) {
+            crypto.getRandomValues(array);
+            result.push(NONCE_ALPHABET.charAt(array[0] % NONCE_ALPHABET.length));
+        }
+        return result.join('');
+    } else {
+        let retval = "";
+        for(let i = 0; i < NONCE_LENGTH; i++)
+            retval += NONCE_ALPHABET.charAt(Math.floor(Math.random() * NONCE_ALPHABET.length));
+        return retval;
+    }
 }
 
 String.prototype.hashCode = function() {
@@ -1819,7 +2050,7 @@ jQuery.extend(jQuery.fn.dataTableExt.oSort, {
         if ( $.trim(a) !== '' ) {
             // extract timestamp from "<div title='yyyy-mm-dd hh:mm:ss.ususus'><span class='time-day'>dd<sup>th</sup></span> hh:mm:ss</div>"
             var frTimestamp = $.trim(a).split("'")[1];
-            
+
             var frDatea = frTimestamp.split(' ');
             var frTimea = frDatea[1].split('.')[0].split(':');
             var frUseca = frDatea[1].split('.')[1];
@@ -2025,6 +2256,13 @@ function drawInfo(type) {
                 ticks[type].push(_[i][1] | 0);
             }
 
+            for (var i = ticks[type].length - 1; i >= 0; i--) {
+                if (ticks[type][i] === 0)
+                    ticks[type][i] = null;
+                else
+                    break;
+            }
+
             first = false;
 
             datasets.push(
@@ -2067,7 +2305,7 @@ function drawInfo(type) {
 
             if (activePoints.length > 0) {
                 var filter = '" ' + activePoints[0].label.replace(/[^0-9]/g, "") + ':"';
-                var table = $('#details').dataTable();
+                var table = $("#details").dataTable();
 
                 table.fnFilter(filter);
                 scrollTo("#details");
@@ -2180,7 +2418,7 @@ function drawInfo(type) {
                     var filter = a.data.label.replace(/\(([A-Z]+)\)/g, "$1");
 
                     if (!filter.startsWith("Other")) {
-                        var table = $('#details').dataTable();
+                        var table = $("#details").dataTable();
 
                         table.fnFilter(filter);
                         scrollTo("#details");
@@ -2233,7 +2471,7 @@ function drawInfo(type) {
                 var filter = activeBars[0].label;
 
                 if (filter.toLowerCase() != "other") {
-                    var table = $('#details').dataTable();
+                    var table = $("#details").dataTable();
 
                     table.fnFilter(filter);
                     scrollTo("#details");
@@ -2327,7 +2565,7 @@ function drawInfo(type) {
             "callbacks": {
                 onClickSegment: function(a) {
                     var filter = a.data.label;
-                    var table = $('#details').dataTable();
+                    var table = $("#details").dataTable();
 
                     table.fnFilter(filter);
                     scrollTo("#details");
@@ -2437,7 +2675,7 @@ function drawInfo(type) {
                     var filter = a.data.label.substr(0, 8);
 
                     if (!filter.startsWith("Other")) {
-                        var table = $('#details').dataTable();
+                        var table = $("#details").dataTable();
 
                         table.fnFilter(filter);
                         scrollTo("#details");
@@ -2490,7 +2728,7 @@ function initVisual() {
 
     var options = { type: 'pie', sliceColors: sliceColors, minSpotColor: "", maxSpotColor: "", spotColor: "", highlightSpotColor: "", highlightLineColor: "", tooltipClassname: "", width: '30', height: '30', offset: -90, disableInteraction: true };
 
-    $('#severity_sparkline').sparkline(data, options);
+    $("#severity_sparkline").sparkline(data, options);
 
 
     // Trails sparkline
@@ -2524,7 +2762,7 @@ function initVisual() {
 
     total["Trails"] = _TRAILS_SORTED.length;
 
-    $('#trails_sparkline').sparkline(data, options);
+    $("#trails_sparkline").sparkline(data, options);
 
     // Threats sparkline
     var _ = {};
@@ -2568,7 +2806,7 @@ function initVisual() {
     }
 
     total["Threats"] = _THREATS_SORTED.length;
-    $('#threats_sparkline').sparkline(data, options);
+    $("#threats_sparkline").sparkline(data, options);
 
     // Events sparklines
     for (var hour in _HOURS) {
@@ -2602,6 +2840,15 @@ function initVisual() {
                     _MAX_EVENTS_PER_HOUR = Math.max(_MAX_EVENTS_PER_HOUR, _HOURS[hour][key] | 0);
                     sparklines[key].push(_HOURS[hour][key] | 0);
                 }
+        }
+
+        for (var key in sparklines) {
+            for (var i = sparklines[key].length - 1; i >= 0; i--) {
+                if (sparklines[key][i] === 0)
+                    sparklines[key][i] = null;
+                else
+                    break;
+            }
         }
     }
     else {
@@ -2693,6 +2940,11 @@ function initVisual() {
     if (!found) {
         $('#events_sparkline').sparkline([], options);
     }
+    else {
+        options.lineColor = "rgba(255, 255, 255, 0.25)";
+        options.lineWidth = 1;
+        $('#events_sparkline').sparkline([0, 0], options);
+    }
 
     sum = 0;
     $("[id$=_count]").each(function() {
@@ -2759,6 +3011,17 @@ function dayEnd(tick_seconds) {
     return Math.floor(value.getTime());
 }
 
+$(document).keyup(function(e){
+    var key = e.which || e.keyCode;
+
+    if (key === 37) {        // left
+        $("#details_previous").click();
+    }
+    else if (key === 39) {    // right
+        $("#details_next").click();
+    }
+});
+
 $(document).ready(function() {
     var from = dayStart(new Date().getTime());
     var to = dayStart(new Date().getTime());
@@ -2770,7 +3033,6 @@ $(document).ready(function() {
 });
 
 function query(date1, date2) {
-    var range = $("#slider").val();
     if (date2 === undefined) {
         var url = location.origin + "/events?date=" + formatDate(date1);
 
@@ -2789,3 +3051,4 @@ function query(date1, date2) {
         init(url, d1, d2);
     }
 }
+

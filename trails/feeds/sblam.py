@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2014-2017 Miroslav Stampar (@stamparm)
+Copyright (c) 2014-2025 Maltrail developers (https://github.com/stamparm/maltrail/)
 See the file 'LICENSE' for copying permission
 """
 
 from core.common import retrieve_content
 
-__url__ = "http://sblam.com/blacklist.txt"
+__url__ = "https://sblam.com/blacklist.txt"
 __check__ = "HTTP spam sources"
-__info__ = "http spammer"
+__info__ = "bad reputation (suspicious)"
 __reference__ = "sblam.com"
 
 def fetch():

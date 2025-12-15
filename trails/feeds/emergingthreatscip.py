@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2014-2017 Miroslav Stampar (@stamparm)
+Copyright (c) 2014-2025 Maltrail developers (https://github.com/stamparm/maltrail/)
 See the file 'LICENSE' for copying permission
 """
 
 from core.common import retrieve_content
 
-__url__ = "http://rules.emergingthreats.net/open/suricata/rules/compromised-ips.txt"
+__url__ = "https://rules.emergingthreats.net/open/suricata/rules/compromised-ips.txt"
 __info__ = "compromised (suspicious)"
 __reference__ = "emergingthreats.net"
 

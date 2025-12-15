@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2014-2017 Miroslav Stampar (@stamparm)
+Copyright (c) 2014-2025 Maltrail developers (https://github.com/stamparm/maltrail/)
 See the file 'LICENSE' for copying permission
 """
 
 from core.common import retrieve_content
 
-__url__ = "https://www.turris.cz/greylist-data/greylist-latest.csv"
+__url__ = "https://view.sentinel.turris.cz/greylist-data/greylist-latest.csv"
 __check__ = ".1"
 __info__ = "bad reputation"
 __reference__ = "turris.cz"

@@ -1,11 +1,13 @@
 ![Maltrail](https://i.imgur.com/3xjInOD.png)
 
-[![Build Status](https://api.travis-ci.org/stamparm/maltrail.svg?branch=master)](https://api.travis-ci.org/stamparm/maltrail) [![Python 2.6|2.7](https://img.shields.io/badge/python-2.6|2.7-yellow.svg)](https://www.python.org/) [![License](https://img.shields.io/badge/license-MIT-red.svg)](https://github.com/stamparm/maltrail#license) [![Twitter](https://img.shields.io/badge/twitter-@maltrail-blue.svg)](https://twitter.com/maltrail)
+[![Python 2.6|2.7|3.x](https://img.shields.io/badge/python-2.6|2.7|3.x-yellow.svg)](https://www.python.org/) [![License](https://img.shields.io/badge/license-MIT-red.svg)](https://github.com/stamparm/maltrail#license) [![Malware families](https://img.shields.io/badge/malware_families-1494-orange.svg)](https://github.com/stamparm/maltrail/tree/master/trails/static/malware) [![Malware sinkholes](https://img.shields.io/badge/malware_sinkholes-1354-green.svg)](https://github.com/stamparm/maltrail/tree/master/trails/static/malware) [![Twitter](https://img.shields.io/badge/twitter-@maltrail-blue.svg)](https://twitter.com/maltrail)
 
 ## Content
 
 - [Introduction](#introduction)
 - [Architecture](#architecture)
+- [Demo pages](#demo-pages)
+- [Requirements](#requirements)
 - [Quick start](#quick-start)
 - [Administrator's guide](#administrators-guide)
  - [Sensor](#sensor)
@@ -25,120 +27,87 @@
  - [DNS resource exhaustion](#dns-resource-exhaustion)
  - [Data leakage](#data-leakage)
  - [False positives](#false-positives)
-- [Requirements](#requirements)
+- [Best practice(s)](#best-practices)
 - [License](#license)
-- [Donations](#donations)
+- [Sponsors](#sponsors)
+- [Developers](#developers)
+- [Presentations](#presentations)
+- [Publications](#publications)
+- [Blacklist](#blacklist)
+- [Thank you](#thank-you)
+- [Third-party integrations](#third-party-integrations)
 
 ## Introduction
 
-**Maltrail** is a malicious traffic detection system, utilizing publicly available (black)lists containing malicious and/or generally suspicious trails, along with static trails compiled from various AV reports and custom user defined lists, where trail can be anything from domain name (e.g. `zvpprsensinaix.com` for [Banjori](http://www.johannesbader.ch/2015/02/the-dga-of-banjori/) malware), URL (e.g. `http://109.162.38.120/harsh02.exe` for known malicious [executable](https://www.virustotal.com/en/file/61f56f71b0b04b36d3ef0c14bbbc0df431290d93592d5dd6e3fffcc583ec1e12/analysis/)), IP address (e.g. `185.130.5.231` for known attacker) or HTTP User-Agent header value (e.g. `sqlmap` for automatic SQL injection and database takeover tool). Also, it uses (optional) advanced heuristic mechanisms that can help in discovery of unknown threats (e.g. new malware).
+**Maltrail** is a malicious traffic detection system, utilizing publicly available (black)lists containing malicious and/or generally suspicious trails, along with static trails compiled from various AV reports and custom user defined lists, where trail can be anything from domain name (e.g. `zvpprsensinaix.com` for [Banjori](http://www.johannesbader.ch/2015/02/the-dga-of-banjori/) malware), URL (e.g. `hXXp://109.162.38.120/harsh02.exe` for known malicious [executable](https://www.virustotal.com/en/file/61f56f71b0b04b36d3ef0c14bbbc0df431290d93592d5dd6e3fffcc583ec1e12/analysis/)), IP address (e.g. `185.130.5.231` for known attacker) or HTTP User-Agent header value (e.g. `sqlmap` for automatic SQL injection and database takeover tool). Also, it uses (optional) advanced heuristic mechanisms that can help in discovery of unknown threats (e.g. new malware).
 
 ![Reporting tool](https://i.imgur.com/Sd9eqoa.png)
 
 The following (black)lists (i.e. feeds) are being utilized:
 
 ```
-alienvault, autoshun, badips, bambenekconsultingc2dns,
-bambenekconsultingc2ip, bambenekconsultingdga, bitcoinnodes,
-blocklist, botscout, bruteforceblocker, ciarmy, cruzit,
-cybercrimetracker, deepviz, dataplanesipinvitation,
-dataplanesipquery, dataplane, dshielddns, dshieldip, 
-emergingthreatsbot, emergingthreatscip, emergingthreatsdns,
-feodotrackerdns, malwaredomainlist, malwaredomains, malwarepatrol,
-maxmind, myip, nothink, openbl, openphish, packetmailcarisirt,
-packetmailramnode, palevotracker, policeman, proxylists, proxyrss,
-proxy, ransomwaretrackerdns, ransomwaretrackerip,
-ransomwaretrackerurl, riproxies, rutgers, sblam, securityresearch,
-snort, socksproxy, sslipbl, sslproxies, torproject, torstatus,
-turris, urlvir, voipbl, vxvault, zeustrackerdns, zeustrackerip,
-zeustrackermonitor, zeustrackerurl, etc.
+360bigviktor, 360chinad, 360conficker, 360cryptolocker, 360gameover, 
+360locky, 360necurs, 360suppobox, 360tofsee, 360virut, abuseipdb, alienvault, 
+atmos, badips, bitcoinnodes, blackbook, blocklist, botscout, 
+bruteforceblocker, ciarmy, cobaltstrike, cruzit, cybercrimetracker, 
+dataplane, dshieldip, emergingthreatsbot, emergingthreatscip, 
+emergingthreatsdns, feodotrackerip, gpfcomics, greensnow, ipnoise,
+kriskinteldns, kriskintelip, malc0de, malwaredomainlistdns, malwaredomains,
+maxmind, minerchk, myip, openphish, palevotracker, policeman, pony,
+proxylists, proxyrss, proxyspy, ransomwaretrackerdns, ransomwaretrackerip, 
+ransomwaretrackerurl, riproxies, rutgers, sblam, socksproxy, sslbl, 
+sslproxies, talosintelligence, torproject, trickbot, turris, urlhaus, 
+viriback, vxvault, zeustrackermonitor, zeustrackerurl, etc.
 ```
 
-As of static entries, the trails for the following malicious entities (e.g. malware C&Cs or sinkholes) have been manually included (from various AV reports and personal research):
+As for static entries, the trails for the following malicious entities (e.g. malware C&Cs or sinkholes) have been manually included (from various AV reports and personal research):
 
 ```
-aboc, adwind, alienspy, almalocker, alureon, android_acecard, 
-android_adrd, android_alienspy, android_arspam, 
-android_backflash, android_basebridge, android_boxer, 
-android_chuli, android_claco, android_coolreaper, 
-android_counterclank, android_cyberwurx, android_dendoroid, 
-android_dougalek, android_droidjack, android_droidkungfu, 
-android_enesoluty, android_ewalls, android_exprespam, 
-android_fakebanco, android_fakedown, android_fakeinst, 
-android_fakelog, android_fakemart, android_fakemrat, 
-android_fakeneflic, android_fakesecsuit, android_feabme, 
-android_flexispy, android_frogonal, android_geinimi, 
-android_ghostpush, android_ginmaster, android_gmaster, 
-android_godwon, android_golddream, android_gonesixty, 
-android_ibanking, android_kemoge, android_lockdroid, 
-android_lovetrap, android_maistealer, android_maxit, 
-android_oneclickfraud, android_opfake, android_ozotshielder, 
-android_pikspam, android_pjapps, android_qdplugin, 
-android_repane, android_roidsec, android_samsapo, 
-android_sandorat, android_selfmite, android_simplocker, 
-android_skullkey, android_sndapps, android_spytekcell, 
-android_stealer, android_stels, android_teelog, android_tetus, 
-android_tonclank, android_torec, android_uracto, 
-android_usbcleaver, android_walkinwat, android_windseeker, 
-android_zertsecurity, androm, andromem, angler, anuna, arec, 
-aridviper, artro, autoit, avalanche, avrecon, axpergle, babar, 
-bachosens, badblock, balamid, bamital, bankapol, bankpatch, 
-banloa, banprox, bayrob, bedep, blackenergy, blackvine, 
-blockbuster, bredolab, bubnix, bucriv, buterat, camerashy, 
-carbanak, carberp, careto, casper, cerber, changeup, chanitor, 
-chekua, cheshire, chewbacca, chisbur, cleaver, cloud_atlas, 
-conficker, contopee, copykittens, corebot, cosmicduke, 
-couponarific, criakl, cridex, crilock, cryakl, cryptinfinite, 
-cryptodefense, cryptolocker, cryptowall, ctblocker, cutwail, 
-darkhotel, defru, desertfalcon, destory, dnschanger, 
-dnsmessenger, dnstrojan, dorifel, dorkbot, drapion, dridex, 
-dukes, dursg, dyreza, elf_aidra, elf_billgates, elf_darlloz, 
-elf_ekoms, elf_fysbis, elf_groundhog, elf_hacked_mint, 
-elf_mayhem, elf_mokes, elf_pinscan, elf_rekoobe, elf_shelldos, 
-elf_sshscan, elf_themoon, elf_turla, elf_xnote, elf_xorddos, 
-elpman, emogen, emotet, equation, evilbunny, ewind, expiro, 
-fakeav, fakeran, fantom, fareit, fbi_ransomware, fiexp, 
-fignotok, fin4, finfisher, fraudload, fynloski, fysna, gamarue, 
-gauss, gbot, generic, golroted, gozi, groundbait, harnig, 
-hawkeye, helompy, hiloti, hinired, htran, immortal, injecto, 
-ios_keyraider, ios_muda, ios_oneclickfraud, ios_specter, 
-ismdoor, jenxcus, kegotip, keydnap, kingslayer, kolab, 
-koobface, korgo, korplug, kovter, kradellsh, kulekmoko, 
-lazarus, locky, lollipop, lotus_blossom, luckycat, majikpos, 
-malwaremustdie, marsjoke, mdrop, mebroot, mestep, mhretriev, 
-miniduke, misogow, modpos, morto, nanocor, nbot, necurs, 
-nemeot, neshuta, nettraveler, netwire, neurevt, nexlogger, 
-nivdort, nonbolqu, nuqel, nwt, nymaim, odcodc, oficla, onkods, 
-optima, osx_keranger, osx_keydnap, osx_salgorea, 
-osx_wirelurker, palevo, pdfjsc, pegasus, pepperat, phytob, 
-picgoo, pift, plagent, plugx, ponmocup, poshcoder, potao, 
-powelike, proslikefan, pushdo, pykspa, qakbot, quasar, ramnit, 
-ransirac, reactorbot, redoctober, redsip, remcos, renocide, 
-reveton, revetrat, rovnix, runforestrun, russian_doll, rustock, 
-sakurel, sality, satana, sathurbot, scarcruft, scarletmimic, 
-scieron, seaduke, sednit, sefnit, selfdel, shifu, shylock, 
-siesta, silentbrute, silly, simda, sinkhole_abuse, 
-sinkhole_anubis, sinkhole_arbor, sinkhole_bitdefender, 
-sinkhole_blacklab, sinkhole_botnethunter, sinkhole_certgovau, 
-sinkhole_certpl, sinkhole_checkpoint, sinkhole_cirtdk, 
-sinkhole_conficker, sinkhole_cryptolocker, sinkhole_drweb, 
-sinkhole_dynadot, sinkhole_dyre, sinkhole_farsight, 
-sinkhole_fbizeus, sinkhole_fitsec, sinkhole_fnord, 
-sinkhole_gameoverzeus, sinkhole_georgiatech, sinkhole_gladtech, 
-sinkhole_honeybot, sinkhole_kaspersky, sinkhole_microsoft, 
-sinkhole_rsa, sinkhole_secureworks, sinkhole_shadowserver, 
-sinkhole_sidnlabs, sinkhole_sinkdns, sinkhole_sofacy, 
-sinkhole_sugarbucket, sinkhole_tech, sinkhole_unknown, 
-sinkhole_virustracker, sinkhole_wapacklabs, sinkhole_zinkhole, 
-skeeyah, skynet, skyper, smsfakesky, snake, snifula, snort, 
-sockrat, sofacy, sohanad, spyeye, stabuniq, stonedrill, 
-stuxnet, synolocker, tdss, teamspy, teerac, teslacrypt, 
-themida, tibet, tinba, torpig, torrentlocker, troldesh, turla, 
-unruy, upatre, utoti, vawtrak, vbcheman, vinderuf, virtum, 
-virut, vittalia, vobfus, volatilecedar, vundo, waledac, 
-waterbug, wecorl, wndred, xadupi, xcodeghost, xtrat, yenibot, 
-yimfoca, zaletelly, zcrypt, zemot, zeroaccess, zeus, zherotee, 
-zlader, zlob, zombrari, zxshell, etc.
+1ms0rry, 404, 9002, aboc, absent, ab, acbackdoor, acridrain, activeagent, 
+adrozek, advisorbot, adwind, adylkuzz, adzok, afrodita, agaadex, agenttesla, 
+aldibot, alina, allakore, almalocker, almashreq, alpha, alureon, amadey, 
+amavaldo, amend_miner, ammyyrat, android_acecard, android_actionspy, 
+android_adrd, android_ahmythrat, android_alienspy, android_andichap, 
+android_androrat, android_anubis, android_arspam, android_asacub, 
+android_backflash, android_bankbot, android_bankun, android_basbanke, 
+android_basebridge, android_besyria, android_blackrock, android_boxer, 
+android_buhsam, android_busygasper, android_calibar, android_callerspy, 
+android_camscanner, android_cerberus, android_chuli, android_circle, 
+android_claco, android_clickfraud, android_cometbot, android_cookiethief, 
+android_coolreaper, android_copycat, android_counterclank, android_cyberwurx, 
+android_darkshades, android_dendoroid, android_dougalek, android_droidjack, 
+android_droidkungfu, android_enesoluty, android_eventbot, android_ewalls, 
+android_ewind, android_exodus, android_exprespam, android_fakeapp, 
+android_fakebanco, android_fakedown, android_fakeinst, android_fakelog, 
+android_fakemart, android_fakemrat, android_fakeneflic, android_fakesecsuit, 
+android_fanta, android_feabme, android_flexispy, android_fobus, 
+android_fraudbot, android_friend, android_frogonal, android_funkybot, 
+android_gabas, android_geinimi, android_generic, android_geost, 
+android_ghostpush, android_ginmaster, android_ginp, android_gmaster, 
+android_gnews, android_godwon, android_golddream, android_goldencup, 
+android_golfspy, android_gonesixty, android_goontact, android_gplayed, 
+android_gustuff, android_gypte, android_henbox, android_hiddad, 
+android_hydra, android_ibanking, android_joker, android_jsmshider, 
+android_kbuster, android_kemoge, android_ligarat, android_lockdroid, 
+android_lotoor, android_lovetrap, android_malbus, android_mandrake, 
+android_maxit, android_mobok, android_mobstspy, android_monokle, 
+android_notcompatible, android_oneclickfraud, android_opfake, 
+android_ozotshielder, android_parcel, android_phonespy, android_pikspam, 
+android_pjapps, android_qdplugin, android_raddex, android_ransomware, 
+android_redalert, android_regon, android_remotecode, android_repane, 
+android_riltok, android_roamingmantis, android_roidsec, android_rotexy, 
+android_samsapo, android_sandrorat, android_selfmite, android_shadowvoice, 
+android_shopper, android_simbad, android_simplocker, android_skullkey, 
+android_sndapps, android_spynote, android_spytekcell, android_stels, 
+android_svpeng, android_swanalitics, android_teelog, android_telerat, 
+android_tetus, android_thiefbot, android_tonclank, android_torec, 
+android_triada, android_uracto, android_usbcleaver, android_viceleaker, 
+android_vmvol, android_walkinwat, android_windseeker, android_wirex, 
+android_wolfrat, android_xavirad, android_xbot007, android_xerxes, 
+android_xhelper, android_xploitspy, android_z3core, android_zertsecurity, 
+android_ztorg, andromeda, antefrigus, antibot, anubis, anuna, apocalypse, 
+apt_12, apt_17, apt_18, apt_23, apt_27, apt_30, apt_33, apt_37, apt_38, 
+apt_aridviper, apt_babar, apt_bahamut, etc.
 ```
 
 ## Architecture
@@ -151,41 +120,114 @@ Maltrail is based on the **Traffic** -&gt; **Sensor** &lt;-&gt; **Server** &lt;-
 
 Note: **Server** component can be skipped altogether, and just use the standalone **Sensor**. In such case, all events would be stored in the local logging directory, while the log entries could be examined either manually or by some CSV reading application.
 
+## Demo pages
+
+Fully functional demo pages with collected real-life threats can be found [here](https://maltraildemo.github.io/).
+
+## Requirements
+
+To run Maltrail properly, [Python](http://www.python.org/download/) **2.6**, **2.7** or **3.x** is required on \*nix/BSD system, together with installed [pcapy-ng](https://pypi.org/project/pcapy-ng/) package.
+
+**NOTE:** Use of ```pcapy``` lib instead of ```pcapy-ng``` can lead to incorrect work of Maltrail, especially on **Python 3.x** environments. [Examples](https://github.com/stamparm/maltrail/issues?q=label%3Apcapy-ng-related+is%3Aclosed).
+
+- **Sensor** component requires at least 1GB of RAM to run in single-process mode or more if run in multiprocessing mode, depending on the value used for option `CAPTURE_BUFFER`. Additionally, **Sensor** component (in the general case) requires administrative/root privileges.
+
+- **Server** component does not have any special requirements.
+
 ## Quick start
 
 The following set of commands should get your Maltrail **Sensor** up and running (out of the box with default settings and monitoring interface "any"):
 
-```
-sudo apt-get install git python-pcapy
-git clone https://github.com/stamparm/maltrail.git
+- For **Ubuntu/Debian**
+
+```sh
+sudo apt-get install git python3 python3-dev python3-pip python-is-python3 libpcap-dev build-essential procps schedtool
+sudo pip3 install pcapy-ng
+git clone --depth 1 https://github.com/stamparm/maltrail.git
 cd maltrail
-sudo python sensor.py
+sudo python3 sensor.py
+```
+
+- For **SUSE/openSUSE**
+
+```sh
+sudo zypper install gcc gcc-c++ git libpcap-devel python3-devel python3-pip procps schedtool
+sudo pip3 install pcapy-ng
+git clone --depth 1 https://github.com/stamparm/maltrail.git
+cd maltrail
+sudo python3 sensor.py
+```
+
+Don't forget to put interfaces in promiscuous mode as needed: 
+
+```sh
+for dev in $(ifconfig | grep mtu | grep -Eo '^\w+'); do ifconfig $dev promisc; done
 ```
 
 ![Sensor](https://i.imgur.com/E9tt2ek.png)
 
 To start the (optional) **Server** on same machine, open a new terminal and execute the following:
 
-```
-[[ -d maltrail ]] || git clone https://github.com/stamparm/maltrail.git
+```sh
+[[ -d maltrail ]] || git clone --depth 1 https://github.com/stamparm/maltrail.git
 cd maltrail
 python server.py
 ```
 
 ![Server](https://i.imgur.com/loGW6GA.png)
 
+- For **Docker**
+
+Currently only the server is available as a container image.
+
+Start the container with `docker run`: 
+
+```sh
+# Build image
+# Start the server
+docker run -d --name maltrail --restart=unless-stopped --port 8338:8338/tcp --port 8337:8337/udp -v /etc/maltrail.conf:/opt/maltrail/maltrail.conf:ro ghcr.io/stamparm/maltrail:latest
+# Update the image regularly
+docker stop maltrail
+docker pull ghcr.io/stamparm/maltrail:latest
+docker start maltrail
+```
+
+If you need a fixed version, change the `docker run` command to not start `ghcr.io/stamparm/maltrail:latest` but for example `ghcr.io/stamparm/maltrail:0.84`
+
+... or with `docker compose`:
+
+```sh
+# For both
+docker compose up -d
+# Update image regularly
+docker compose down --remove-orphans
+docker compose build
+docker compose up -d
+```
+
+Don't edit the `docker-compose.yml` file directly, as this will be overwritten by `git pull`.  Instead, copy it to `docker-compose.override.yml` and edit that file; it is included in this repo's `.gitignore`.  
+
 To test that everything is up and running execute the following:
 
-```
+```sh
 ping -c 1 136.161.101.53
 cat /var/log/maltrail/$(date +"%Y-%m-%d").log
 ```
 
 ![Test](https://i.imgur.com/NYJg6Kl.png)
 
+Also, to test the capturing of DNS traffic you can try the following:
+
+```sh
+nslookup morphed.ru
+cat /var/log/maltrail/$(date +"%Y-%m-%d").log
+```
+
+![Test2](https://i.imgur.com/62oafEe.png)
+
 To stop **Sensor** and **Server** instances (if running in background) execute the following:
 
-```
+```sh
 sudo pkill -f sensor.py
 pkill -f server.py
 ```
@@ -203,7 +245,20 @@ Sensor's configuration can be found inside the `maltrail.conf` file's section `[
 ![Sensor's configuration](https://i.imgur.com/8yZKH14.png)
 
 If option `USE_MULTIPROCESSING` is set to `true` then all CPU cores will be used. One core will be used only for packet capture (with appropriate affinity, IO priority and nice level settings), while other cores will be used for packet processing. Otherwise, everything will be run on a single core. Option `USE_FEED_UPDATES` can be used to turn off the trail updates from feeds altogether (and just use the provided static ones). Option `UPDATE_PERIOD` contains the number of seconds between each automatic trails update (Note: default value is set to `86400` (i.e. one day)) by using definitions inside the `trails` directory (Note: both **Sensor** and **Server** take care of the trails update). Option `CUSTOM_TRAILS_DIR` can be used by user to provide location of directory containing the custom trails (`*.txt`) files.
-Option `USE_HEURISTICS` turns on heuristic mechanisms (e.g. `long domain name (suspicious)`, `excessive no such domain name (suspicious)`, `direct .exe download (suspicious)`, etc.), potentially introducing false positives. Option `CAPTURE_BUFFER` presents a total memory (in bytes of percentage of total physical memory) to be used in case of multiprocessing mode for storing packet capture in a ring buffer for further processing by non-capturing processes. Option `MONITOR_INTERFACE` should contain the name of the capturing interface. Use value `any` to capture from all interfaces (if OS supports this). Option `CAPTURE_FILTER` should contain the network capture (`tcpdump`) filter to skip the uninteresting packets and ease the capturing process. Option `SENSOR_NAME` contains the name that should be appearing inside the events `sensor_name` value, so the event from one sensor could be distinguished from the other. If option `LOG_SERVER` is set, then all events are being sent remotely to the **Server**, otherwise they are stored directly into the logging directory set with option `LOG_DIR`, which can be found inside the `maltrail.conf` file's section `[All]`. In case that the option `UPDATE_SERVER` is set, then all the trails are being pulled from the given location, otherwise they are being updated from trails definitions located inside the installation itself.
+
+Option `USE_HEURISTICS` turns on heuristic mechanisms (e.g. `long domain name (suspicious)`, `excessive no such domain name (suspicious)`, `direct .exe download (suspicious)`, etc.), potentially introducing false positives. Option `CAPTURE_BUFFER` presents a total memory (in bytes or percentage of total physical memory) to be used in case of multiprocessing mode for storing packet capture in a ring buffer for further processing by non-capturing processes. Option `MONITOR_INTERFACE` should contain the name of the capturing interface. Use value `any` to capture from all interfaces (if OS supports this). Option `CAPTURE_FILTER` should contain the network capture (`tcpdump`) filter to skip the uninteresting packets and ease the capturing process. Option `SENSOR_NAME` contains the name that should be appearing inside the events `sensor_name` value, so the event from one sensor could be distinguished from the other. If option `LOG_SERVER` is set, then all events are being sent remotely to the **Server**, otherwise they are stored directly into the logging directory set with option `LOG_DIR`, which can be found inside the `maltrail.conf` file's section `[All]`. In case that the option `UPDATE_SERVER` is set, then all the trails are being pulled from the given location, otherwise they are being updated from trails definitions located inside the installation itself.
+
+Options `SYSLOG_SERVER` and/or `LOGSTASH_SERVER` can be used to send sensor events (i.e. log data) to non-Maltrail servers. In case of `SYSLOG_SERVER`, event data will be sent in CEF (*Common Event Format*) format to UDP (e.g. Syslog) service listening at the given address (e.g. `192.168.2.107:514`), while in case of `LOGSTASH_SERVER` event data will be sent in JSON format to UDP (e.g. Logstash) service listening at the given address (e.g. `192.168.2.107:5000`).
+
+Example of event data being sent over UDP is as follows:
+
+- For option `SYSLOG_SERVER` (Note: `LogSeverity` values are 0 (for low), 1 (for medium) and 2 (for high)):
+
+```Dec 24 15:05:55 beast CEF:0|Maltrail|sensor|0.27.68|2020-12-24|andromeda (malware)|2|src=192.168.5.137 spt=60453 dst=8.8.8.8 dpt=53 trail=morphed.ru ref=(static)```
+
+- For option `LOGSTASH_SERVER`:
+
+```{"timestamp": 1608818692, "sensor": "beast", "severity": "high", "src_ip": "192.168.5.137", "src_port": 48949, "dst_ip": "8.8.8.8", "dst_port": 53, "proto": "UDP", "type": "DNS", "trail": "morphed.ru", "info": "andromeda (malware)", "reference": "(static)"}```
 
 When running the sensor (e.g. `sudo python sensor.py`) for the first time and/or after a longer period of non-running, it will automatically update the trails from trail definitions (Note: stored inside the `trails` directory). After the initialization, it will start monitoring the configured interface (option `MONITOR_INTERFACE` inside the `maltrail.conf`) and write the events to either the configured log directory (option `LOG_DIR` inside the `maltrail.conf` file's section `[All]`) or send them remotely to the logging/reporting **Server** (option `LOG_SERVER`).
 
@@ -227,7 +282,37 @@ Subsection `USERS` contains user's configuration settings. Each user entry consi
 
 Option `UDP_ADDRESS` contains the server's log collecting listening address (Note: use `0.0.0.0` to listen on all interfaces), while option `UDP_PORT` contains listening port value. If turned on, when used in combination with option `LOG_SERVER`, it can be used for distinct (multiple) **Sensor** <-> **Server** architecture.
 
-Same as for **Sensor**, when running the **Server** (e.g. `python server.py`) for the first time and/or after a longer period of non-running, if option `USE_SERVER_UPDATE_TRAILS` is set to `true`, it will automatically update the trails from trail definitions (Note: stored inside the `trails` directory). Its basic function is to store the log entries inside the logging directory (i.e. option `LOG_DIR` inside the `maltrail.conf` file's section `[All]`) and provide the web reporting interface for presenting those same entries to the end-user (Note: there is no need install the 3rd party web server packages like Apache):
+Option `FAIL2BAN_REGEX` contains the regular expression (e.g. `attacker|reputation|potential[^"]*(web scan|directory traversal|injection|remote code|iot-malware download|spammer|mass scanner`) to be used in `/fail2ban` web calls for extraction of today's attacker source IPs. This allows the usage of IP blocking mechanisms (e.g. `fail2ban`, `iptables` or `ipset`) by periodic pulling of blacklisted IP addresses from remote location. Example usage would be the following script (e.g. run as a `root` cronjob on a minute basis):
+
+```sh
+#!/bin/bash
+ipset -q flush maltrail
+ipset -q create maltrail hash:net
+for ip in $(curl http://127.0.0.1:8338/fail2ban 2>/dev/null | grep -P '^[0-9.]+$'); do ipset add maltrail $ip; done
+iptables -I INPUT -m set --match-set maltrail src -j DROP
+```
+
+Option `BLACKLIST` allows to build regular expressions to apply on one field. For each rule, the syntax is : `<field> <control> <regexp>` where :
+* `field` indicates the field to compare, it can be: `src_ip`,`src_port`,`dst_ip`,`dst_port`,`protocol`,`type`,`trail` or `filter`.
+* `control` can be either `~` for *matches* or `!~` for *doesn't match*
+* `regexp` is the regular expression to apply to the field.
+Chain another rule with the `and` keyword (the `or` keyword is not supported, just add a line for this).
+
+You can use the keyword `BLACKLIST` alone or add a name : `BLACKLIST_NAME`. In the latter case, the url will be : `/blacklist/name`
+
+For example, the following will build an out blacklist for all traffic from another source than `192.168.0.0/16` to destination port `SSH` or matching the filters `scan` or `known attacker`
+```
+BLACKLIST_OUT
+    src_ip !~ ^192.168. and dst_port ~ ^22$
+    src_ip !~ ^192.168. and filter ~ scan
+    src_ip !~ ^192.168. and filter ~ known attacker
+
+BLACKLIST_IN
+    src_ip ~ ^192.168. and filter ~ malware
+```
+The way to build ipset blacklist is the same (see above) except that URLs will be `/blacklist/in` and `/blacklist/out` in our example.
+
+Same as for **Sensor**, when running the **Server** (e.g. `python server.py`) for the first time and/or after a longer period of non-running, if option `USE_SERVER_UPDATE_TRAILS` is set to `true`, it will automatically update the trails from trail definitions (Note: stored inside the `trails` directory). Its basic function is to store the log entries inside the logging directory (i.e. option `LOG_DIR` inside the `maltrail.conf` file's section `[All]`) and provide the web reporting interface for presenting those same entries to the end-user (Note: there is no need to install the 3rd party web server packages like Apache):
 
 ![Server run](https://i.imgur.com/GHdGPw7.png)
 
@@ -265,17 +350,17 @@ When moving mouse over `src_ip` and `dst_ip` table entries, information tooltip 
 
 ![On mouse over IP](https://i.imgur.com/BgKchAX.png)
 
-Event details (e.g. `src_port`, `dst_port`, `proto`, etc.) that differ inside same threat entry are condensed in form of a cloud icon (i.e. ![Cloud ellipsis](https://raw.githubusercontent.com/stamparm/maltrail/master/html/images/ellipsis.png)). This is performed to get an usable reporting interface with as less rows as possible. Moving mouse over such icon will result in a display of an information tooltip with all items held (e.g. all port numbers being scanned by `attacker`):
+Event details (e.g. `src_port`, `dst_port`, `proto`, etc.) that differ inside same threat entry are condensed in form of a bubble icon (i.e. ![Ellipsis](https://raw.githubusercontent.com/stamparm/maltrail/master/html/images/ellipsis.png)). This is performed to get an usable reporting interface with as less rows as possible. Moving mouse over such icon will result in a display of an information tooltip with all items held (e.g. all port numbers being scanned by `attacker`):
 
-![On mouse over cloud](https://i.imgur.com/BfYT2u7.png)
+![On mouse over bubble](https://i.imgur.com/BfYT2u7.png)
 
 Clicking on one such icon will open a new dialog containing all stored items (Note: in their uncondensed form) ready to be Copy-Paste(d) for further analysis:
 
 ![Ctrl-C dialog](https://i.imgur.com/9pgMpiR.png)
 
-When hovering mouse pointer over the threat's trail for couple of seconds it will result in a frame consisted of results using the trail as a search term performed against [DuckDuckGo](https://duckduckgo.com/) search engine. In lots of cases, this provides basic information about the threat itself, eliminating the need for user to do the manual search for it. In upper right corner of the opened frame window there are two extra buttons. By clicking the first one (i.e. ![New tab icon](https://raw.githubusercontent.com/stamparm/maltrail/master/html/images/newtab.png)), the resulting frame will be opened inside the new browser's tab (or window), while by clicking the second one (i.e. ![Close icon](https://raw.githubusercontent.com/stamparm/maltrail/master/html/images/close.png)) will immediately close the frame (Note: the same action is achieved by moving the mouse pointer outside the frame borders):
+When hovering mouse pointer over the threat's trail for couple of seconds it will result in a frame consisted of results using the trail as a search term performed against ~~[Search Encrypt](https://www.searchencrypt.com/)~~ [searX](https://searx.nixnet.services/) search engine. In lots of cases, this provides basic information about the threat itself, eliminating the need for user to do the manual search for it. In upper right corner of the opened frame window there are two extra buttons. By clicking the first one (i.e. ![New tab icon](https://raw.githubusercontent.com/stamparm/maltrail/master/html/images/newtab.png)), the resulting frame will be opened inside the new browser's tab (or window), while by clicking the second one (i.e. ![Close icon](https://raw.githubusercontent.com/stamparm/maltrail/master/html/images/close.png)) will immediately close the frame (Note: the same action is achieved by moving the mouse pointer outside the frame borders):
 
-![On mouse over trail](https://i.imgur.com/ppoMHub.png)
+![On mouse over trail](https://i.imgur.com/ZxnHn1N.png)
 
 For each threat there is a column `tag` that can be filled with arbitrary "tags" to closely describe all threats sharing the same trail. Also, it is a great way to describe threats individually, so all threats sharing the same tag (e.g. `yahoo`) could be grouped out later:
 
@@ -287,7 +372,7 @@ In the following section some of the "usual suspects" scenarios will be describe
 
 #### Mass scans
 
-Mass scans is a fairly common phenomenon where individuals and/or organizations give themselves a right to scan the whole 0.0.0.0/0 IP range (i.e. whole Internet) on a daily basis, with disclaimer where they say that if you don't like it then you should contact them privately to be skipped from future scans. 
+Mass scans are a fairly common phenomenon where individuals and/or organizations give themselves a right to scan the whole 0.0.0.0/0 IP range (i.e. whole Internet) on a daily basis, with disclaimer where they say that if you don't like it then you should contact them privately to be skipped from future scans. 
 
 ![Shodan FileZilla results](https://i.imgur.com/nwOwLP9.png)
 
@@ -297,9 +382,9 @@ Here is a reverse DNS and WHOIS lookup of the "attacker"'s address:
 
 ![Shodan 1](https://i.imgur.com/LQ6Vu00.png)
 
-When hovering mouse pointer over the `trail` column's content (IP address), you'll be presented with the search results from [DuckDuckGo](https://duckduckgo.com/) where you'll be able to find more information about the "attacker" (i.e. Shodan):
+When hovering mouse pointer over the `trail` column's content (IP address), you'll be presented with the search results from [searX](https://searx.nixnet.services/) where you'll be able to find more information about the "attacker":
 
-![Shodan 2](https://i.imgur.com/sv7ONzk.png)
+![Shodan 2](https://i.imgur.com/vIzB8bA.png)
 
 In the `dst_ip` column, if you have a large organization, you'll be presented with large list of scanned IP addresses:
 ![Shodan 3](https://i.imgur.com/EhAtXs7.png)
@@ -392,7 +477,7 @@ By using filter `ipinfo` all potentially infected computers in our organization'
 
 #### Suspicious direct file downloads
 
-Maltrail tracks all suspicious direct file download attempts (e.g. `.apk`, `.exe` and `.scr` file extensions). This can trigger lots of false positives, but eventually could help in reconstruction of the chain of infection (Note: legitimate service providers, like Google, usually use encrypted HTTPS to perform this kind of downloads):
+Maltrail tracks all suspicious direct file download attempts (e.g. `.apk`, `.bin`, `.class`, `.chm`, `.dll`, `.egg`, `.exe`, `.hta`, `.hwp`, `.lnk`, `.ps1`, `.scr`, `.sct`, `.wbk` and `.xpi` file extensions). This can trigger lots of false positives, but eventually could help in reconstruction of the chain of infection (Note: legitimate service providers, like Google, usually use encrypted HTTPS to perform this kind of downloads):
 
 ![Direct .exe download](https://i.imgur.com/jr5BS1h.png)
 
@@ -406,7 +491,7 @@ In following example, web application vulnerability scan has been marked as "sus
 
 ![Vulnerability scan](https://i.imgur.com/QzcaEsG.png)
 
-If we click on the cloud icon (i.e. ![Cloud ellipsis](https://raw.githubusercontent.com/stamparm/maltrail/master/html/images/ellipsis.png)) for details and copy paste the whole content to a textual file, we'll be able to see all suspicious HTTP requests:
+If we click on the bubble icon (i.e. ![Ellipsis](https://raw.githubusercontent.com/stamparm/maltrail/master/html/images/ellipsis.png)) for details and copy paste the whole content to a textual file, we'll be able to see all suspicious HTTP requests:
 
 ![Vulnerability scan requests](https://i.imgur.com/XY9K01o.png)
 
@@ -416,7 +501,7 @@ In the following screenshot, a run of popular SQLi vulnerability tool [sqlmap](h
 
 #### Port scanning
 
-In case of too many connection attempts toward considerable amount of different TCP ports, Maltrail will warn about the potential port scanning, as a result of its heuristic mechanism detection. It the following screenshot such warning(s) can be found for a run of popular port scanning tool [nmap](https://nmap.org/):
+In case of too many connection attempts toward considerable amount of different TCP ports, Maltrail will warn about the potential port scanning, as a result of its heuristic mechanism detection. In the following screenshot such warning(s) can be found for a run of popular port scanning tool [nmap](https://nmap.org/):
 
 ![nmap scan](https://i.imgur.com/VS7L2A3.png)
 
@@ -438,9 +523,9 @@ Like in all other security solutions, Maltrail is prone to "[false positives](ht
 
 ![Google false positive 1](https://i.imgur.com/HFvCNNK.png)
 
-By hovering mouse over the trail, frame with results from [DuckDuckGo](https://duckduckgo.com/) search show that this is a regular Google's server:
+By hovering mouse over the trail, frame with results from [searX](https://searx.nixnet.services/) search show that this is (most probably) a regular Google's server:
 
-![Google false positive 2](https://i.imgur.com/4cS9NJB.png)
+![Google false positive 2](https://i.imgur.com/i3oydv6.png)
 
 As another example, access to regular `.work` domains (popular TLD for malicious purposes) resulted with the following threat:
 
@@ -450,17 +535,101 @@ Nevertheless, administrator(s) should invest some extra time and check (with oth
 
 ![Suspicious .ws](https://i.imgur.com/bOLmXUE.png)
 
-## Requirements
+## Best practice(s)
 
-To properly run the Maltrail, [Python](http://www.python.org/download/) **2.6.x** or **2.7.x** is required, together with [pcapy](http://corelabs.coresecurity.com/index.php?module=Wiki&action=view&type=tool&name=Pcapy) (e.g. `sudo apt-get install python-pcapy`). There are no other requirements, other than to run the **Sensor** component with the administrative/root privileges.
+1. Install Maltrail:
+
+- On **Ubuntu/Debian**
+
+    ```sh
+    sudo apt-get install git python3 python3-dev python3-pip python-is-python3 libpcap-dev build-essential procps schedtool
+    sudo pip3 install pcapy-ng
+    cd /tmp
+    git clone --depth 1 https://github.com/stamparm/maltrail.git
+    sudo mv /tmp/maltrail /opt
+    sudo chown -R $USER:$USER /opt/maltrail
+    ```
+    
+- On **SUSE/openSUSE**
+
+   ```sh
+   sudo zypper install gcc gcc-c++ git libpcap-devel python3-devel python3-pip procps schedtool
+   sudo pip3 install pcapy-ng
+   cd /tmp
+   git clone --depth 1 https://github.com/stamparm/maltrail.git
+   sudo mv /tmp/maltrail /opt
+   sudo chown -R $USER:$USER /opt/maltrail
+   ```
+
+2. Set working environment:
+
+    ```sh
+    sudo mkdir -p /var/log/maltrail
+    sudo mkdir -p /etc/maltrail
+    sudo cp /opt/maltrail/maltrail.conf /etc/maltrail
+    sudo nano /etc/maltrail/maltrail.conf
+    ```
+
+3. Set running environment:
+
+    * `crontab -e  # autostart server & periodic update`
+
+    ```
+    */5 * * * * if [ -n "$(ps -ef | grep -v grep | grep 'server.py')" ]; then : ; else python3 /opt/maltrail/server.py -c /etc/maltrail/maltrail.conf; fi
+    0 1 * * * cd /opt/maltrail && git pull
+    ```
+
+    * `sudo crontab -e  # autostart sensor & periodic restart`
+
+    ```
+    */1 * * * * if [ -n "$(ps -ef | grep -v grep | grep 'sensor.py')" ]; then : ; else python3 /opt/maltrail/sensor.py -c /etc/maltrail/maltrail.conf; fi
+    2 1 * * * /usr/bin/pkill -f maltrail
+    ```
+
+4. Enable as systemd services (Linux only):
+
+    ```sh
+    sudo cp /opt/maltrail/maltrail-sensor.service /etc/systemd/system/maltrail-sensor.service
+    sudo cp /opt/maltrail/maltrail-server.service /etc/systemd/system/maltrail-server.service
+    sudo systemctl daemon-reload
+    sudo systemctl start maltrail-server.service
+    sudo systemctl start maltrail-sensor.service
+    sudo systemctl enable maltrail-server.service
+    sudo systemctl enable maltrail-sensor.service
+    systemctl status maltrail-server.service && systemctl status maltrail-sensor.service
+    
+    ```
+    
+  **Note**: ```/maltrail-sensor.service``` can be started as dedicated service without pre-started ```/maltrail-server.service```. This is useful for case, when ```/maltrail-server.service``` is installed and works on another machine in you network environment.
+
 
 ## License
 
-This software is provided under under a MIT License. See the accompanying [LICENSE](https://github.com/stamparm/maltrail/blob/master/LICENSE) file for more information.
+This software is provided under a MIT License. See the accompanying [LICENSE](https://github.com/stamparm/maltrail/blob/master/LICENSE) file for more information.
 
-## Donations
+## Sponsors
 
-This project is a result of numerous hours of software development. If you appreciate the work and you want to see it further developed, please consider making a donation via [PayPal](https://www.paypal.com/) to `miroslav.stampar@gmail.com` or via [&#x0243;itcoin](bitcoin:1JCtgmpC1eWvdHXrKfvMAunfvcaaMXLP5G) to `1JCtgmpC1eWvdHXrKfvMAunfvcaaMXLP5G`.
+* [Sansec](https://sansec.io/) (2024-2025)
+* [Sansec](https://sansec.io/) (2020-2021)
+
+## Developers
+
+* Miroslav Stampar ([@stamparm](https://github.com/stamparm))
+* Mikhail Kasimov ([@MikhailKasimov](https://github.com/MikhailKasimov))
+
+## Presentations
+
+* 47th TF-CSIRT Meeting, Prague (Czech Republic), 2016 ([slides](https://www.terena.org/activities/tf-csirt/meeting47/M.Stampar-Maltrail.pdf))
+
+## Publications
+
+* Detect attacks on your network with Maltrail, Linux Magazine, 2022 ([Annotation](https://www.linux-magazine.com/Issues/2022/258/Maltrail))
+* Best Cyber Threat Intelligence Feeds ([SilentPush Review, 2022](https://www.silentpush.com/blog/best-cyber-threat-intelligence-feeds))
+* Research on Network Malicious Traffic Detection System Based on Maltrail ([Nanotechnology Perceptions, ISSN 1660-6795, 2024](https://nano-ntp.com/index.php/nano/article/view/1915/1497))
+
+## Blacklist
+
+* Maltrail's daily updated blacklist of malware-related domains can be found [here](https://raw.githubusercontent.com/stamparm/aux/master/maltrail-malware-domains.txt). It is based on trails found at [trails/static/malware](trails/static/malware) and can be safely used for DNS traffic blocking purposes.
 
 ## Thank you
 
@@ -469,3 +638,33 @@ This project is a result of numerous hours of software development. If you appre
 * James Lay
 * Ladislav Baco (@laciKE)
 * John Kristoff (@jtkdpu)
+* Michael M&uuml;nz (@mimugmail)
+* David Brush
+* @Godwottery
+* Chris Wild (@briskets)
+* Keith Irwin (@ki9us)
+* Simon Szustkowski (@simonszu)
+
+## Third-party integrations
+
+* [FreeBSD Port](https://www.freshports.org/security/maltrail)
+* [OPNSense Gateway Plugin](https://github.com/opnsense/plugins/pull/1257)
+* [D4 Project](https://www.d4-project.org/2019/09/25/maltrail-integration.html)
+* [BlackArch Linux](https://github.com/BlackArch/blackarch/blob/master/packages/maltrail/PKGBUILD)
+* [Validin LLC](https://twitter.com/ValidinLLC/status/1719666086390517762)
+* [Maltrail Add-on for Splunk](https://splunkbase.splunk.com/app/7211)
+* [Maltrail decoder and rules for Wazuh](https://github.com/MikhailKasimov/maltrail-wazuh-decoder-and-rules)
+* [GScan](https://github.com/grayddq/GScan) <sup>1</sup>
+* [MalwareWorld](https://www.malwareworld.com/) <sup>1</sup>
+* [oisd | domain blocklist](https://oisd.nl/?p=inc) <sup>1</sup>
+* [NextDNS](https://github.com/nextdns/metadata/blob/e0c9c7e908f5d10823b517ad230df214a7251b13/security/threat-intelligence-feeds.json) <sup>1</sup>
+* [NoTracking](https://github.com/notracking/hosts-blocklists/blob/master/SOURCES.md) <sup>1</sup>
+* [OWASP Mobile Audit](https://github.com/mpast/mobileAudit#environment-variables) <sup>1</sup>
+* [Mobile-Security-Framework-MobSF](https://github.com/MobSF/Mobile-Security-Framework-MobSF/commit/12b07370674238fa4281fc7989b34decc2e08876) <sup>1</sup>
+* [pfBlockerNG-devel](https://github.com/pfsense/FreeBSD-ports/blob/devel/net/pfSense-pkg-pfBlockerNG-devel/files/usr/local/www/pfblockerng/pfblockerng_feeds.json) <sup>1</sup>
+* [Sansec eComscan](https://sansec.io/kb/about-ecomscan/ecomscan-license)<sup>1</sup>
+* [Palo Alto Networks Cortex XSOAR](https://xsoar.pan.dev/docs/reference/integrations/github-maltrail-feed)<sup>2</sup>
+ 
+<sup>1</sup> Using (only) trails
+
+<sup>2</sup> Connector to trails (only)

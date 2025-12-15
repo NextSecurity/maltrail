@@ -7,13 +7,13 @@ See the file 'LICENSE' for copying permission
 from core.common import retrieve_content
 
 __url__ = "https://dataplane.org/*.txt"
-__check__ = "DataPlane.org"
+__check__ = "Dataplane.org"
 __info__ = "known attacker"
 __reference__ = "dataplane.org"
 
 def fetch():
     retval = {}
-    for url in ("https://dataplane.org/sipinvitation.txt", "https://dataplane.org/sipquery.txt", "https://dataplane.org/sipregistration.txt", "https://dataplane.org/sshclient.txt", "https://dataplane.org/sshpwauth.txt", "https://dataplane.org/vncrfb.txt"):
+    for url in ("https://dataplane.org/dnsrd.txt", "https://dataplane.org/dnsrdany.txt", "https://dataplane.org/dnsversion.txt", "https://dataplane.org/sipinvitation.txt", "https://dataplane.org/sipquery.txt", "https://dataplane.org/sipregistration.txt", "https://dataplane.org/smtpdata.txt", "https://dataplane.org/smtpgreet.txt", "https://dataplane.org/sshclient.txt", "https://dataplane.org/sshpwauth.txt", "https://dataplane.org/telnetlogin.txt", "https://dataplane.org/vncrfb.txt"):
         content = retrieve_content(url)
 
         if __check__ in content:

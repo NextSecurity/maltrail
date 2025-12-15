@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Copyright (c) 2014-2017 Miroslav Stampar (@stamparm)
+Copyright (c) 2014-2025 Maltrail developers (https://github.com/stamparm/maltrail/)
 See the file 'LICENSE' for copying permission
 """
 
@@ -18,7 +18,8 @@ from core.settings import LOAD_TRAILS_RETRY_SLEEP_TIME
 from core.settings import REGULAR_SENSOR_SLEEP_TIME
 from core.settings import SHORT_SENSOR_SLEEP_TIME
 from core.settings import trails
-from core.settings import TRAILS_FILE
+
+_timer = None
 
 def read_block(buffer, i):
     offset = i * BLOCK_LENGTH % config.CAPTURE_BUFFER
@@ -59,7 +60,9 @@ def worker(buffer, n, offset, mod, process_packet):
     """
 
     def update_timer():
-        if (time.time() - os.stat(TRAILS_FILE).st_mtime) >= config.UPDATE_PERIOD:
+        global _timer
+
+        if (time.time() - os.stat(config.TRAILS_FILE).st_mtime) >= config.UPDATE_PERIOD:
             _ = None
             while True:
                 _ = load_trails(True)
@@ -69,11 +72,13 @@ def worker(buffer, n, offset, mod, process_packet):
                     break
                 else:
                     time.sleep(LOAD_TRAILS_RETRY_SLEEP_TIME)
-        threading.Timer(config.UPDATE_PERIOD, update_timer).start()
+
+        _timer = threading.Timer(config.UPDATE_PERIOD, update_timer)
+        _timer.start()
 
     update_timer()
 
-    count = 0L
+    count = 0
     while True:
         try:
             if (count % mod) == offset:
@@ -86,7 +91,7 @@ def worker(buffer, n, offset, mod, process_packet):
                 if content is None:
                     break
 
-                if len(content) < 12:
+                elif len(content) < 12:
                     continue
 
                 sec, usec, ip_offset = struct.unpack("=III", content[:12])
@@ -97,3 +102,6 @@ def worker(buffer, n, offset, mod, process_packet):
 
         except KeyboardInterrupt:
             break
+
+    if _timer:
+        _timer.cancel()
