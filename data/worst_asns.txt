@@ -7855,3 +7855,28 @@
 89.144.60.0/24,albhost
 93.123.113.0/24,albhost
 93.123.46.0/24,albhost
+
+# AS 56322
+# Reference: https://ipinfo.io/AS56322
+# Reference: https://x.com/Fact_Finder03/status/2121602654317199513
+
+185.163.204.0/24,serverastra-as
+195.20.115.0/24,serverastra-as
+217.28.130.0/24,serverastra-as
+82.21.225.0/24,serverastra-as
+82.21.226.0/24,serverastra-as
+82.22.225.0/24,serverastra-as
+82.23.199.0/24,serverastra-as
+82.23.215.0/24,serverastra-as
+82.23.218.0/24,serverastra-as
+82.24.227.0/24,serverastra-as
+82.25.223.0/24,serverastra-as
+82.25.236.0/24,serverastra-as
+82.26.231.0/24,serverastra-as
+82.29.209.0/24,serverastra-as
+82.29.236.0/24,serverastra-as
+91.219.236.0/22,serverastra-as
+91.219.237.0/24,serverastra-as
+91.219.238.0/24,serverastra-as
+91.219.239.0/24,serverastra-as
+93.114.72.0/24,serverastra-as
